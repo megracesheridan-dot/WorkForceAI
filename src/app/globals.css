@@ -1,39 +1,47 @@
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
 @import "tailwindcss";
 
+/* Dark-first : outil pro (Linear/Vercel) — indigo comme couleur de marque,
+   cyan réservé aux états "actif / en exécution" pour ne pas être un clone. */
 :root {
-  --bg: #EAEAE3;
-  --surface: #FFFFFF;
-  --surface-2: #F4F4EE;
-  --border: #D7D7CB;
-  --ink: #1B1C17;
-  --ink-soft: #56574C;
-  --ink-faint: #82836F;
-  --accent: #A8571F;
-  --accent-strong: #7A3F14;
-  --accent-tint: #F3E4D5;
-  --good: #2F7D6B;
-  --good-tint: #E1EFEA;
-  --bad: #A23B3B;
-  --bad-tint: #F5E4E1;
+  --bg: #0A0A0C;
+  --surface: #131316;
+  --surface-2: #1A1A1F;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --ink: #F2F2F5;
+  --ink-soft: #A1A1AA;
+  --ink-faint: #6B6B76;
+  --accent: #6366F1;
+  --accent-strong: #818CF8;
+  --accent-tint: rgba(99, 102, 241, 0.12);
+  --cyan: #22D3EE;
+  --cyan-tint: rgba(34, 211, 238, 0.12);
+  --good: #34D399;
+  --good-tint: rgba(52, 211, 153, 0.12);
+  --bad: #F87171;
+  --bad-tint: rgba(248, 113, 113, 0.12);
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
   :root {
-    --bg: #17181B;
-    --surface: #1E2023;
-    --surface-2: #24262A;
-    --border: #34363B;
-    --ink: #ECEBE6;
-    --ink-soft: #ADAEA5;
-    --ink-faint: #797A70;
-    --accent: #E28A3F;
-    --accent-strong: #F2A35C;
-    --accent-tint: #3A2A1A;
-    --good: #4FB39E;
-    --good-tint: #17332C;
-    --bad: #D97B7B;
-    --bad-tint: #3A2323;
+    --bg: #FAFAFA;
+    --surface: #FFFFFF;
+    --surface-2: #F4F4F6;
+    --border: rgba(0, 0, 0, 0.08);
+    --border-strong: rgba(0, 0, 0, 0.16);
+    --ink: #0A0A0C;
+    --ink-soft: #52525B;
+    --ink-faint: #8B8B94;
+    --accent: #4F46E5;
+    --accent-strong: #4338CA;
+    --accent-tint: rgba(79, 70, 229, 0.08);
+    --cyan: #0891B2;
+    --cyan-tint: rgba(8, 145, 178, 0.08);
+    --good: #059669;
+    --good-tint: rgba(5, 150, 105, 0.08);
+    --bad: #DC2626;
+    --bad-tint: rgba(220, 38, 38, 0.08);
   }
 }
 
@@ -42,19 +50,31 @@
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);
   --color-ink-faint: var(--ink-faint);
   --color-accent: var(--accent);
   --color-accent-strong: var(--accent-strong);
   --color-accent-tint: var(--accent-tint);
+  --color-cyan: var(--cyan);
+  --color-cyan-tint: var(--cyan-tint);
   --color-good: var(--good);
   --color-good-tint: var(--good-tint);
   --color-bad: var(--bad);
   --color-bad-tint: var(--bad-tint);
-  --font-display: "Fraunces", ui-serif, Georgia, serif;
+  --font-display: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", monospace;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 5px rgba(34, 211, 238, 0);
+  }
 }
 
 body {
@@ -65,17 +85,24 @@ body {
 
 h1, h2, h3 {
   font-family: var(--font-display);
-  letter-spacing: -0.01em;
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
 .input {
-  border-radius: 0.5rem;
+  border-radius: 8px;
   border: 1px solid var(--border);
-  background: var(--surface);
+  background: var(--surface-2);
   padding: 0.5rem 0.75rem;
   font-size: 0.875rem;
+  color: var(--ink);
   outline: none;
+  transition: border-color 150ms ease-out, box-shadow 150ms ease-out;
+}
+.input::placeholder {
+  color: var(--ink-faint);
 }
 .input:focus {
   border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-tint);
 }

@@ -16,13 +16,13 @@ export default function Home() {
       <div className="flex gap-3">
         <Link
           href="/signup"
-          className="rounded-lg bg-accent px-5 py-3 text-sm font-medium text-white hover:bg-accent-strong"
+          className="rounded-lg bg-accent px-5 py-3 text-sm font-medium text-white transition-colors duration-150 ease-out hover:bg-accent-strong"
         >
           Créer mon Workforce
         </Link>
         <Link
           href="/login"
-          className="rounded-lg border border-border px-5 py-3 text-sm font-medium hover:bg-surface-2"
+          className="rounded-lg border border-border px-5 py-3 text-sm font-medium transition-colors duration-150 ease-out hover:border-border-strong hover:bg-surface-2"
         >
           Se connecter
         </Link>

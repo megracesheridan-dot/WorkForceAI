@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Button } from "@/components/ui";
 import { signUp } from "../actions";
 
 export default async function SignupPage({
@@ -28,29 +29,20 @@ export default async function SignupPage({
           type="text"
           required
           placeholder="Nom affiché"
-          className="rounded-lg border border-border bg-surface px-3 py-2.5 text-sm outline-none focus:border-accent"
+          className="input"
         />
-        <input
-          name="email"
-          type="email"
-          required
-          placeholder="Email"
-          className="rounded-lg border border-border bg-surface px-3 py-2.5 text-sm outline-none focus:border-accent"
-        />
+        <input name="email" type="email" required placeholder="Email" className="input" />
         <input
           name="password"
           type="password"
           required
           minLength={6}
           placeholder="Mot de passe (6 caractères min.)"
-          className="rounded-lg border border-border bg-surface px-3 py-2.5 text-sm outline-none focus:border-accent"
+          className="input"
         />
-        <button
-          type="submit"
-          className="mt-1 rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-white hover:bg-accent-strong"
-        >
+        <Button type="submit" className="mt-1 w-full">
           Créer mon compte
-        </button>
+        </Button>
       </form>
 
       <p className="text-sm text-ink-soft">

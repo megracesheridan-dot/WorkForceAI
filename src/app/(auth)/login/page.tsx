@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Button } from "@/components/ui";
 import { signIn } from "../actions";
 
 export default async function LoginPage({
@@ -20,26 +21,17 @@ export default async function LoginPage({
       ) : null}
 
       <form action={signIn} className="flex flex-col gap-3">
-        <input
-          name="email"
-          type="email"
-          required
-          placeholder="Email"
-          className="rounded-lg border border-border bg-surface px-3 py-2.5 text-sm outline-none focus:border-accent"
-        />
+        <input name="email" type="email" required placeholder="Email" className="input" />
         <input
           name="password"
           type="password"
           required
           placeholder="Mot de passe"
-          className="rounded-lg border border-border bg-surface px-3 py-2.5 text-sm outline-none focus:border-accent"
+          className="input"
         />
-        <button
-          type="submit"
-          className="mt-1 rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-white hover:bg-accent-strong"
-        >
+        <Button type="submit" className="mt-1 w-full">
           Se connecter
-        </button>
+        </Button>
       </form>
 
       <p className="text-sm text-ink-soft">

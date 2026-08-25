@@ -67,7 +67,7 @@ export default async function AssetsPage() {
 
       <div>
         <p className="mb-3 font-display text-lg font-semibold">Transaction History</p>
-        <div className="overflow-hidden rounded-2xl border border-border">
+        <div className="overflow-hidden rounded-xl border border-border">
           <table className="w-full text-sm">
             <thead className="bg-surface-2 text-left font-mono text-[11px] uppercase tracking-wide text-ink-faint">
               <tr>
