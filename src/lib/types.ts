@@ -15,6 +15,15 @@ export interface Profile {
   bonus_credits: number;
   cycle_position: number;
   cycle_total: number;
+  team_id: string | null;
+  created_at: string;
+}
+
+export interface Team {
+  id: string;
+  name: string;
+  invite_code: string;
+  created_by: string;
   created_at: string;
 }
 
