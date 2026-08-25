@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import type { AssignmentInstance, AssignmentCatalogueItem, Profile } from "@/lib/types";
+import type { AssignmentInstance, AssignmentCatalogueItem, AiEmployee, Profile } from "@/lib/types";
 import { AssignmentPanel } from "./AssignmentPanel";
 
 export default async function AssignmentsPage() {
@@ -30,6 +30,16 @@ export default async function AssignmentsPage() {
       .eq("id", latest.catalogue_id)
       .single<AssignmentCatalogueItem>();
     catalogue = data;
+  }
+
+  let employees: AiEmployee[] = [];
+  if (catalogue) {
+    const { data } = await supabase
+      .from("ai_employees")
+      .select("*")
+      .in("role", catalogue.recommended_roles)
+      .returns<AiEmployee[]>();
+    employees = data ?? [];
   }
 
   let missingRoleLevel: number | null = null;
@@ -68,6 +78,7 @@ export default async function AssignmentsPage() {
         cycleDone={cycleDone}
         nextLevelHint={profile?.level}
         missingRoleLevel={missingRoleLevel}
+        employees={employees}
       />
     </div>
   );

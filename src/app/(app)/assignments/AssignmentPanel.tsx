@@ -3,8 +3,11 @@
 import { useState, useTransition } from "react";
 import { Card, Badge, Button } from "@/components/ui";
 import { formatCredits } from "@/lib/format";
-import type { AssignmentInstance, AssignmentCatalogueItem } from "@/lib/types";
+import type { AssignmentInstance, AssignmentCatalogueItem, AiEmployee } from "@/lib/types";
 import { requestAssignment, assignAndExecute, levelUp } from "./actions";
+import { ExecutionSequence } from "./ExecutionSequence";
+
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export function AssignmentPanel({
   instance,
@@ -12,6 +15,7 @@ export function AssignmentPanel({
   creditBalance,
   cycleDone,
   missingRoleLevel,
+  employees,
 }: {
   instance: AssignmentInstance | null;
   catalogue: AssignmentCatalogueItem | null;
@@ -19,9 +23,11 @@ export function AssignmentPanel({
   cycleDone: boolean;
   nextLevelHint?: number;
   missingRoleLevel?: number | null;
+  employees: AiEmployee[];
 }) {
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [executing, setExecuting] = useState(false);
 
   function run(action: () => Promise<void>) {
     setError(null);
@@ -30,6 +36,24 @@ export function AssignmentPanel({
         await action();
       } catch (e) {
         setError(e instanceof Error ? e.message : "Une erreur est survenue.");
+      }
+    });
+  }
+
+  function runExecution(instanceId: string) {
+    setError(null);
+    setExecuting(true);
+    startTransition(async () => {
+      try {
+        // Le calcul réel (coût, livrable, reward) est déjà fait et vérifié côté
+        // serveur avant que cette promesse ne résolve — le délai minimum ici ne
+        // fait que ne jamais révéler le résultat plus vite que la séquence
+        // visuelle, il ne modifie ni ne retarde artificiellement le résultat lui-même.
+        await Promise.all([assignAndExecute(instanceId), wait(2200)]);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "Une erreur est survenue.");
+      } finally {
+        setExecuting(false);
       }
     });
   }
@@ -63,6 +87,10 @@ export function AssignmentPanel({
   }
 
   if (!catalogue) return null;
+
+  if (executing) {
+    return <ExecutionSequence title={catalogue.title} employees={employees} />;
+  }
 
   if (instance.status === "completed") {
     return (
@@ -196,8 +224,8 @@ export function AssignmentPanel({
 
       {error ? <p className="text-sm text-bad">{error}</p> : null}
 
-      <Button onClick={() => run(() => assignAndExecute(instance.id))} disabled={pending}>
-        {pending ? "Exécution en cours…" : "Assign My AI Employees"}
+      <Button onClick={() => runExecution(instance.id)} disabled={pending}>
+        Assign My AI Employees
       </Button>
     </Card>
   );
