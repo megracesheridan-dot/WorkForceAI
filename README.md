@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Arena — MVP
 
-## Getting Started
+Plateforme d'AI workforce : recrute des AI Employees, assigne des Assignments business,
+génère des Performance Rewards. Coûts et rewards toujours affichés **avant** l'exécution —
+aucun mécanisme de récompense retenue (voir `AI Arena Blueprint` pour le détail produit).
 
-First, run the development server:
+## Stack
+
+- **Next.js 16** (App Router, TypeScript, Tailwind CSS v4)
+- **Supabase** — Postgres, Auth, Row Level Security, fonctions SQL transactionnelles
+- **OpenAI** — moteur d'exécution des AI Employees (adaptateur interchangeable, voir `src/lib/ai/`)
+
+## Démarrage local
+
+### 1. Installer les dépendances
+
+```bash
+npm install
+```
+
+### 2. Configurer Supabase
+
+Le projet Supabase existe déjà : `https://zjrsuqzwkspijmryuhiq.supabase.co`.
+
+Dans le **SQL Editor** du dashboard Supabase, exécute dans l'ordre :
+
+1. `supabase/migrations/0001_init.sql` — schéma complet (tables, RLS, fonctions).
+2. `supabase/seed.sql` — niveaux, AI Employees et catalogue d'Assignments de démarrage.
+
+### 3. Variables d'environnement
+
+Copie `.env.local.example` en `.env.local` et remplis :
+
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` — Project Settings → API → `anon` `public`
+- `SUPABASE_SERVICE_ROLE_KEY` — Project Settings → API → `service_role` (à garder secret, jamais commité — utile pour des scripts d'admin futurs, pas utilisé par l'app aujourd'hui)
+- `OPENAI_API_KEY` — clé créée sur platform.openai.com (nécessaire pour que les Assignments produisent de vrais livrables)
+
+### 4. Lancer en local
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ouvre http://localhost:3000. Crée un compte depuis `/signup` — un profil est créé
+automatiquement avec 200 crédits de démarrage et le niveau 1 (Starter Operator).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 5. Devenir admin (pour tester l'espace de gestion)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Dans le SQL Editor Supabase :
 
-## Learn More
+```sql
+update public.profiles set is_admin = true where id = '<ton user id>';
+```
 
-To learn more about Next.js, take a look at the following resources:
+Le lien "Espace de gestion" apparaît alors dans la sidebar (`/admin`).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Boucle produit implémentée
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Auth (email/mot de passe) + création automatique de profil
+- Dashboard (cycle, solde, niveau, notifications)
+- **Assignment System** : Request Assignment → Capacity Check (coût + reward affichés
+  avant tout engagement) → Assign My AI Employees → exécution réelle via OpenAI →
+  Execution Report avec livrable téléchargeable → reward créditée
+- AI Workforce (employés débloqués par niveau, déblocage de niveau à coût publié)
+- Assets (solde en direct, historique des transactions, dépôt = stub en attendant le paiement réel)
+- Espace de gestion : vue d'ensemble, utilisateurs (+ crédit manuel pour les tests),
+  catalogue d'Assignments (création, activation/désactivation)
 
-## Deploy on Vercel
+Toute la logique financière (coût, reward, niveau, crédit admin) vit dans des fonctions
+Postgres `SECURITY DEFINER` (`supabase/migrations/0001_init.sql`) — une seule transaction
+atomique par opération, rien n'est calculé côté navigateur.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Prochaines étapes (hors MVP)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Paiement réel (Stripe ou équivalent) pour Deposit / Buy Credits
+- Teams (bonus collectif, classement)
+- Rewarded ads
+- Déploiement : Vercel (app) + Supabase (déjà hébergé) ; Render en option pour un futur
+  worker si l'exécution IA doit sortir du cycle de requête HTTP (assignments longs, files d'attente)
