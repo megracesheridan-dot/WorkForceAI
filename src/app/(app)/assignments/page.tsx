@@ -32,6 +32,18 @@ export default async function AssignmentsPage() {
     catalogue = data;
   }
 
+  let missingRoleLevel: number | null = null;
+  if (latest?.status === "specialist_required" && latest.missing_role) {
+    const { data } = await supabase
+      .from("ai_employees")
+      .select("level_required")
+      .eq("role", latest.missing_role)
+      .order("level_required", { ascending: true })
+      .limit(1)
+      .maybeSingle<{ level_required: number }>();
+    missingRoleLevel = data?.level_required ?? null;
+  }
+
   const cycleDone =
     (profile?.cycle_position ?? 0) >= (profile?.cycle_total ?? 15) &&
     (!latest || latest.status === "completed");
@@ -55,6 +67,7 @@ export default async function AssignmentsPage() {
         creditBalance={profile?.credit_balance ?? 0}
         cycleDone={cycleDone}
         nextLevelHint={profile?.level}
+        missingRoleLevel={missingRoleLevel}
       />
     </div>
   );

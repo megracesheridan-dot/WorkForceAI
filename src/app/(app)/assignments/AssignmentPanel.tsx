@@ -11,12 +11,14 @@ export function AssignmentPanel({
   catalogue,
   creditBalance,
   cycleDone,
+  missingRoleLevel,
 }: {
   instance: AssignmentInstance | null;
   catalogue: AssignmentCatalogueItem | null;
   creditBalance: number;
   cycleDone: boolean;
   nextLevelHint?: number;
+  missingRoleLevel?: number | null;
 }) {
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -104,8 +106,8 @@ export function AssignmentPanel({
         <p className="text-sm text-ink-soft">
           Cette Assignment nécessite un employé <strong>{instance.missing_role}</strong> (niveau
           {" "}
-          {catalogue.level_required}+). Ta Workforce actuelle ne l&apos;inclut pas encore. Aucun
-          crédit n&apos;a été engagé.
+          {missingRoleLevel ?? catalogue.level_required}+). Ta Workforce actuelle ne l&apos;inclut
+          pas encore. Aucun crédit n&apos;a été engagé.
         </p>
         {error ? <p className="text-sm text-bad">{error}</p> : null}
         <div className="flex gap-3">
