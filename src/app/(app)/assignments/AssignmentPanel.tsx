@@ -94,21 +94,24 @@ export function AssignmentPanel({
 
   if (instance.status === "completed") {
     return (
-      <Card className="flex flex-col gap-4">
+      <Card accent className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <p className="font-display text-lg font-semibold">Execution Report</p>
           <Badge tone="good">Completed</Badge>
         </div>
         <p className="text-sm text-ink-soft">{catalogue.title}</p>
-        <div className="rounded-xl border border-border bg-surface-2 p-4">
+        <div className="rounded-lg border border-gold/30 bg-gold-tint p-4">
           <p className="font-mono text-[11px] uppercase tracking-wide text-ink-faint">
             Performance Reward
           </p>
-          <p className="font-mono text-2xl font-semibold text-good">
+          <p
+            className="mt-1 font-display text-3xl font-bold tabular-nums text-gold"
+            style={{ textShadow: "0 0 24px var(--gold-glow)" }}
+          >
             +{formatCredits(instance.reward_granted)} credits
           </p>
         </div>
-        <div className="rounded-xl border border-border bg-surface-2 p-4">
+        <div className="rounded-lg border border-border bg-surface-2 p-4">
           <p className="mb-2 font-mono text-[11px] uppercase tracking-wide text-ink-faint">
             Livrable
           </p>

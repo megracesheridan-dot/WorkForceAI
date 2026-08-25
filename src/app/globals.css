@@ -1,47 +1,58 @@
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
-/* Dark-first : outil pro (Linear/Vercel) — indigo comme couleur de marque,
-   cyan réservé aux états "actif / en exécution" pour ne pas être un clone. */
+/* Gaming / esport premium — fond noir riche, violet comme couleur de marque
+   (l'énergie de l'Arena), cyan pour "actif / en exécution", or réservé aux
+   moments de récompense (reward, niveau premium) pour qu'il reste rare et fort. */
 :root {
-  --bg: #0A0A0C;
-  --surface: #131316;
-  --surface-2: #1A1A1F;
-  --border: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(255, 255, 255, 0.16);
-  --ink: #F2F2F5;
-  --ink-soft: #A1A1AA;
-  --ink-faint: #6B6B76;
-  --accent: #6366F1;
-  --accent-strong: #818CF8;
-  --accent-tint: rgba(99, 102, 241, 0.12);
+  --bg: #050308;
+  --surface: #130F1C;
+  --surface-2: #1C1626;
+  --border: rgba(167, 139, 250, 0.16);
+  --border-strong: rgba(167, 139, 250, 0.38);
+  --ink: #F6F3FF;
+  --ink-soft: #B3A9CC;
+  --ink-faint: #766D8C;
+  --accent: #8B5CF6;
+  --accent-strong: #A78BFA;
+  --accent-tint: rgba(139, 92, 246, 0.16);
+  --accent-glow: rgba(139, 92, 246, 0.55);
   --cyan: #22D3EE;
-  --cyan-tint: rgba(34, 211, 238, 0.12);
+  --cyan-tint: rgba(34, 211, 238, 0.14);
+  --cyan-glow: rgba(34, 211, 238, 0.5);
+  --gold: #FBBF24;
+  --gold-tint: rgba(251, 191, 36, 0.14);
+  --gold-glow: rgba(251, 191, 36, 0.5);
   --good: #34D399;
-  --good-tint: rgba(52, 211, 153, 0.12);
-  --bad: #F87171;
-  --bad-tint: rgba(248, 113, 113, 0.12);
+  --good-tint: rgba(52, 211, 153, 0.14);
+  --bad: #FB7185;
+  --bad-tint: rgba(251, 113, 133, 0.14);
 }
 
 @media (prefers-color-scheme: light) {
   :root {
-    --bg: #FAFAFA;
+    --bg: #FAF9FC;
     --surface: #FFFFFF;
-    --surface-2: #F4F4F6;
-    --border: rgba(0, 0, 0, 0.08);
-    --border-strong: rgba(0, 0, 0, 0.16);
-    --ink: #0A0A0C;
-    --ink-soft: #52525B;
-    --ink-faint: #8B8B94;
-    --accent: #4F46E5;
-    --accent-strong: #4338CA;
-    --accent-tint: rgba(79, 70, 229, 0.08);
+    --surface-2: #F2EFF9;
+    --border: rgba(124, 58, 237, 0.14);
+    --border-strong: rgba(124, 58, 237, 0.3);
+    --ink: #16121F;
+    --ink-soft: #524A66;
+    --ink-faint: #8A8098;
+    --accent: #7C3AED;
+    --accent-strong: #6D28D9;
+    --accent-tint: rgba(124, 58, 237, 0.1);
+    --accent-glow: rgba(124, 58, 237, 0.35);
     --cyan: #0891B2;
-    --cyan-tint: rgba(8, 145, 178, 0.08);
+    --cyan-tint: rgba(8, 145, 178, 0.1);
+    --cyan-glow: rgba(8, 145, 178, 0.3);
+    --gold: #D97706;
+    --gold-tint: rgba(217, 119, 6, 0.1);
+    --gold-glow: rgba(217, 119, 6, 0.3);
     --good: #059669;
-    --good-tint: rgba(5, 150, 105, 0.08);
-    --bad: #DC2626;
-    --bad-tint: rgba(220, 38, 38, 0.08);
+    --good-tint: rgba(5, 150, 105, 0.1);
+    --bad: #E11D48;
+    --bad-tint: rgba(225, 29, 72, 0.1);
   }
 }
 
@@ -59,34 +70,44 @@
   --color-accent-tint: var(--accent-tint);
   --color-cyan: var(--cyan);
   --color-cyan-tint: var(--cyan-tint);
+  --color-gold: var(--gold);
+  --color-gold-tint: var(--gold-tint);
   --color-good: var(--good);
   --color-good-tint: var(--good-tint);
   --color-bad: var(--bad);
   --color-bad-tint: var(--bad-tint);
-  --font-display: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Rajdhani", "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", monospace;
 }
 
 @keyframes pulse-glow {
   0%, 100% {
-    box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.35);
+    box-shadow: 0 0 0 0 var(--cyan-glow);
   }
   50% {
-    box-shadow: 0 0 0 5px rgba(34, 211, 238, 0);
+    box-shadow: 0 0 0 6px rgba(34, 211, 238, 0);
   }
 }
 
 body {
-  background: var(--bg);
+  background:
+    radial-gradient(1100px 600px at 12% -10%, rgba(139, 92, 246, 0.16), transparent 60%),
+    radial-gradient(900px 500px at 100% 10%, rgba(34, 211, 238, 0.10), transparent 55%),
+    var(--bg);
+  background-attachment: fixed;
   color: var(--ink);
   font-family: var(--font-sans);
 }
 
 h1, h2, h3 {
   font-family: var(--font-display);
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.glow-text {
+  text-shadow: 0 0 24px var(--accent-glow);
 }
 
 .input {

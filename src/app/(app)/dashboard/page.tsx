@@ -90,8 +90,11 @@ export default async function DashboardPage() {
         <div className="flex items-center gap-3">
           <div className="h-1.5 w-full max-w-xs overflow-hidden rounded-full bg-surface-2">
             <div
-              className="h-full rounded-full bg-accent transition-all duration-500 ease-out"
-              style={{ width: `${cycleDone ? 100 : Math.min(100, (cyclePosition / cycleTotal) * 100)}%` }}
+              className="h-full rounded-full bg-gradient-to-r from-accent to-cyan transition-all duration-500 ease-out"
+              style={{
+                width: `${cycleDone ? 100 : Math.min(100, (cyclePosition / cycleTotal) * 100)}%`,
+                boxShadow: "0 0 10px var(--accent-glow)",
+              }}
             />
           </div>
           <p className="font-mono text-xs text-ink-faint">
@@ -101,8 +104,8 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
-        <Card className="flex flex-col justify-between gap-4">
-          <Stat label="Credit Balance" value={formatCredits(profile?.credit_balance)} />
+        <Card accent className="flex flex-col justify-between gap-4">
+          <Stat label="Credit Balance" value={formatCredits(profile?.credit_balance)} glow />
           <div className="grid grid-cols-2 gap-4 border-t border-border pt-4">
             <Stat label="Workforce Level" value={String(profile?.level ?? 1)} />
             <Stat label="Assignments Completed" value={String(completedCount ?? 0)} />
