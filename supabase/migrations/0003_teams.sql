@@ -36,6 +36,24 @@ create policy "teams_select_own" on public.teams for select
 create policy "profiles_select_teammates" on public.profiles for select
   using (team_id is not null and team_id = public.my_team_id());
 
+-- Nombre d'Assignments complétées aujourd'hui par l'équipe (pour l'affichage du bonus
+-- côté frontend). SECURITY DEFINER : pas de policy exposant les assignment_instances
+-- des coéquipiers, seul ce compte agrégé est accessible.
+create or replace function public.team_completed_today(p_team_id uuid)
+returns integer
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select count(*)::int
+  from public.assignment_instances ai
+  join public.profiles p on p.id = ai.user_id
+  where p.team_id = p_team_id
+    and ai.status = 'completed'
+    and ai.completed_at >= date_trunc('day', now());
+$$;
+
 -- ============================================================
 -- 1) Create Team
 -- ============================================================
