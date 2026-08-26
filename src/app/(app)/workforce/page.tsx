@@ -1,8 +1,24 @@
 import { createClient } from "@/lib/supabase/server";
-import { Card, Badge, Stat } from "@/components/ui";
+import { Card, Badge, Stat, Button } from "@/components/ui";
 import { formatCredits } from "@/lib/format";
 import type { AiEmployee, Profile, WorkforceLevel } from "@/lib/types";
 import { levelUp } from "../assignments/actions";
+
+type Tier = "Standard" | "Advanced" | "Expert" | "Elite";
+
+function tierFor(level: number): { label: Tier; tone: "neutral" | "cyan" | "accent" | "gold"; glow: boolean } {
+  if (level >= 4) return { label: "Elite", tone: "gold", glow: true };
+  if (level === 3) return { label: "Expert", tone: "accent", glow: false };
+  if (level === 2) return { label: "Advanced", tone: "cyan", glow: false };
+  return { label: "Standard", tone: "neutral", glow: false };
+}
+
+const TIER_BORDER: Record<Tier, string> = {
+  Standard: "border-l-border",
+  Advanced: "border-l-cyan",
+  Expert: "border-l-accent",
+  Elite: "border-l-gold",
+};
 
 export default async function WorkforcePage() {
   const supabase = await createClient();
@@ -43,30 +59,25 @@ export default async function WorkforcePage() {
         </h1>
       </div>
 
-      <Card>
-        <div className="flex flex-wrap items-center justify-between gap-6">
-          <Stat label="Workforce Level" value={String(profile?.level ?? 1)} />
-          <Stat label="Employés débloqués" value={String(currentLevel?.employees_count ?? "—")} />
-          <Stat
-            label="Assignments / jour"
-            value={String(currentLevel?.assignments_per_day ?? "—")}
-          />
-          {nextLevel ? (
-            <form action={levelUp} className="flex flex-col items-start gap-1">
-              <p className="font-mono text-[11px] uppercase tracking-wide text-ink-faint">
-                Niveau suivant : {nextLevel.name}
-              </p>
-              <button
-                type="submit"
-                className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent-strong"
-              >
-                Débloquer — {formatCredits(nextLevel.unlock_cost)} credits
-              </button>
-            </form>
-          ) : (
-            <Badge tone="accent">Niveau maximum atteint</Badge>
-          )}
-        </div>
+      <Card accent className="flex flex-wrap items-center justify-between gap-6">
+        <Stat label="Workforce Level" value={String(profile?.level ?? 1)} glow />
+        <Stat label="Employés débloqués" value={String(currentLevel?.employees_count ?? "—")} />
+        <Stat
+          label="Assignments / jour"
+          value={String(currentLevel?.assignments_per_day ?? "—")}
+        />
+        {nextLevel ? (
+          <form action={levelUp} className="flex flex-col items-start gap-1">
+            <p className="font-mono text-[11px] uppercase tracking-wide text-ink-faint">
+              Niveau suivant : {nextLevel.name}
+            </p>
+            <Button type="submit">
+              Débloquer — {formatCredits(nextLevel.unlock_cost)} credits
+            </Button>
+          </form>
+        ) : (
+          <Badge tone="gold">Niveau maximum atteint</Badge>
+        )}
       </Card>
 
       <div>
@@ -74,20 +85,47 @@ export default async function WorkforcePage() {
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {(employees ?? []).map((e) => {
             const unlocked = e.level_required <= (profile?.level ?? 1);
+            const tier = tierFor(e.level_required);
             return (
-              <Card key={e.id} className={unlocked ? "" : "opacity-60"}>
+              <Card
+                key={e.id}
+                className={`border-l-2 ${unlocked ? TIER_BORDER[tier.label] : "border-l-border"} ${
+                  unlocked ? "" : "opacity-50"
+                } ${unlocked && tier.glow ? "shadow-[0_0_24px_-8px_var(--gold-glow)]" : ""}`}
+              >
                 <div className="flex items-center justify-between">
                   <p className="font-display text-base font-semibold">{e.name}</p>
-                  <Badge tone={unlocked ? "good" : "neutral"}>
-                    {unlocked ? "Actif" : `Niveau ${e.level_required}+`}
+                  <Badge tone={unlocked ? tier.tone : "neutral"}>
+                    {unlocked ? tier.label : `Niveau ${e.level_required}+`}
                   </Badge>
                 </div>
                 <p className="mt-1 text-sm text-ink-soft">{e.role}</p>
                 <p className="mt-1 text-xs text-ink-faint">{e.specialty}</p>
-                <div className="mt-3 grid grid-cols-3 gap-2 font-mono text-xs text-ink-soft">
-                  <span>Capacity {e.execution_capacity}</span>
-                  <span>Precision {(e.precision_rate * 100).toFixed(0)}%</span>
-                  <span>Speed {e.speed_index.toFixed(1)}x</span>
+                <div className="mt-3 grid grid-cols-3 gap-2">
+                  <div className="rounded-md bg-surface-2 px-2 py-1.5 text-center">
+                    <p className="font-mono text-xs font-semibold tabular-nums">
+                      {e.execution_capacity}
+                    </p>
+                    <p className="font-mono text-[9px] uppercase tracking-wide text-ink-faint">
+                      Capacity
+                    </p>
+                  </div>
+                  <div className="rounded-md bg-surface-2 px-2 py-1.5 text-center">
+                    <p className="font-mono text-xs font-semibold tabular-nums">
+                      {(e.precision_rate * 100).toFixed(0)}%
+                    </p>
+                    <p className="font-mono text-[9px] uppercase tracking-wide text-ink-faint">
+                      Precision
+                    </p>
+                  </div>
+                  <div className="rounded-md bg-surface-2 px-2 py-1.5 text-center">
+                    <p className="font-mono text-xs font-semibold tabular-nums">
+                      {e.speed_index.toFixed(1)}x
+                    </p>
+                    <p className="font-mono text-[9px] uppercase tracking-wide text-ink-faint">
+                      Speed
+                    </p>
+                  </div>
                 </div>
               </Card>
             );
