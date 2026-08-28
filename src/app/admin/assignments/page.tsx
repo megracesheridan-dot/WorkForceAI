@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { Card, Badge } from "@/components/ui";
+import { Card, Badge, Button } from "@/components/ui";
 import { formatCredits } from "@/lib/format";
 import type { AssignmentCatalogueItem } from "@/lib/types";
 import { createCatalogueItem, toggleCatalogueStatus } from "../actions";
@@ -82,12 +82,9 @@ export default async function AdminAssignmentsPage() {
               className="input"
             />
           </div>
-          <button
-            type="submit"
-            className="col-span-2 mt-1 rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-white hover:bg-accent-strong"
-          >
+          <Button type="submit" className="col-span-2 mt-1">
             Ajouter au catalogue
-          </button>
+          </Button>
         </form>
       </Card>
 
@@ -98,7 +95,7 @@ export default async function AdminAssignmentsPage() {
               <p className="font-medium">
                 {item.title} <span className="text-ink-faint">· Niveau {item.level_required}</span>
               </p>
-              <p className="text-xs text-ink-soft">
+              <p className="font-mono text-xs tabular-nums text-ink-soft">
                 {formatCredits(item.credit_cost)} credits → {formatCredits(item.reward_min)}–
                 {formatCredits(item.reward_max)} reward
               </p>
@@ -112,9 +109,9 @@ export default async function AdminAssignmentsPage() {
                   name="next_status"
                   value={item.status === "active" ? "inactive" : "active"}
                 />
-                <button type="submit" className="text-sm text-accent-strong underline">
+                <Button type="submit" variant="ghost" className="px-3 py-1.5 text-xs">
                   {item.status === "active" ? "Désactiver" : "Activer"}
-                </button>
+                </Button>
               </form>
             </div>
           </Card>

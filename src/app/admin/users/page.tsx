@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { Card, Badge } from "@/components/ui";
+import { Card, Badge, Button } from "@/components/ui";
 import { formatCredits } from "@/lib/format";
 import type { Profile } from "@/lib/types";
 import { grantCredits } from "../actions";
@@ -30,7 +30,9 @@ export default async function AdminUsersPage() {
                 {u.is_admin ? <Badge tone="accent">Admin</Badge> : null}
               </p>
             </div>
-            <div className="font-mono text-sm">{formatCredits(u.credit_balance)} credits</div>
+            <div className="font-mono text-sm font-semibold tabular-nums">
+              {formatCredits(u.credit_balance)} credits
+            </div>
             <form action={grantCredits} className="flex items-center gap-2">
               <input type="hidden" name="user_id" value={u.id} />
               <input
@@ -39,20 +41,12 @@ export default async function AdminUsersPage() {
                 step="0.01"
                 placeholder="Montant"
                 required
-                className="w-28 rounded-lg border border-border bg-surface px-2 py-1.5 text-sm"
+                className="input w-28"
               />
-              <input
-                name="note"
-                type="text"
-                placeholder="Note"
-                className="w-36 rounded-lg border border-border bg-surface px-2 py-1.5 text-sm"
-              />
-              <button
-                type="submit"
-                className="rounded-lg bg-accent px-3 py-1.5 text-sm font-medium text-white hover:bg-accent-strong"
-              >
+              <input name="note" type="text" placeholder="Note" className="input w-36" />
+              <Button type="submit" className="px-3 py-1.5">
                 Créditer
-              </button>
+              </Button>
             </form>
           </Card>
         ))}

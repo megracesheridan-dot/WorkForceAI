@@ -43,11 +43,16 @@ export default async function AssetsPage() {
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-        <Card>
-          <Stat label="Credit Balance" value={formatCredits(profile?.credit_balance)} />
+        <Card accent>
+          <Stat label="Credit Balance" value={formatCredits(profile?.credit_balance)} glow />
         </Card>
         <Card>
-          <Stat label="Withdrawable Balance" value={formatCredits(profile?.withdrawable_balance)} />
+          <Stat
+            label="Withdrawable Balance"
+            value={formatCredits(profile?.withdrawable_balance)}
+            tone="gold"
+            glow
+          />
         </Card>
         <Card>
           <Stat label="Bonus Credits" value={formatCredits(profile?.bonus_credits)} />
@@ -67,7 +72,7 @@ export default async function AssetsPage() {
 
       <div>
         <p className="mb-3 font-display text-lg font-semibold">Transaction History</p>
-        <div className="overflow-hidden rounded-xl border border-border">
+        <div className="overflow-hidden rounded-lg border border-border">
           <table className="w-full text-sm">
             <thead className="bg-surface-2 text-left font-mono text-[11px] uppercase tracking-wide text-ink-faint">
               <tr>
@@ -80,14 +85,23 @@ export default async function AssetsPage() {
             <tbody>
               {(transactions ?? []).map((t) => (
                 <tr key={t.id} className="border-t border-border bg-surface">
-                  <td className="px-4 py-2">{TYPE_LABEL[t.type] ?? t.type}</td>
+                  <td className="px-4 py-2">
+                    <span className="flex items-center gap-2">
+                      <span
+                        className={`h-1.5 w-1.5 shrink-0 rounded-full ${
+                          t.amount >= 0 ? "bg-good" : "bg-bad"
+                        }`}
+                      />
+                      {TYPE_LABEL[t.type] ?? t.type}
+                    </span>
+                  </td>
                   <td
-                    className={`px-4 py-2 font-mono ${t.amount >= 0 ? "text-good" : "text-bad"}`}
+                    className={`px-4 py-2 font-mono tabular-nums ${t.amount >= 0 ? "text-good" : "text-bad"}`}
                   >
                     {t.amount >= 0 ? "+" : ""}
                     {formatCredits(t.amount)}
                   </td>
-                  <td className="px-4 py-2 font-mono">{formatCredits(t.balance_after)}</td>
+                  <td className="px-4 py-2 font-mono tabular-nums">{formatCredits(t.balance_after)}</td>
                   <td className="px-4 py-2 text-ink-soft">{formatDate(t.created_at)}</td>
                 </tr>
               ))}
