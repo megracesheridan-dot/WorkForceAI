@@ -11,7 +11,7 @@ export default function Home() {
       </h1>
       <p className="max-w-xl text-lg text-ink-soft">
         Recrutez des AI Employees, assignez-leur des missions business réelles et générez des
-        Performance Rewards — coûts et récompenses toujours affichés avant l&apos;exécution.
+        Performance Rewards.
       </p>
       <div className="flex gap-3">
         <Link
