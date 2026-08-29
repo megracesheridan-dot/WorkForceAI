@@ -75,6 +75,7 @@ export default async function AssignmentsPage() {
         instance={active}
         catalogue={catalogue}
         creditBalance={profile?.credit_balance ?? 0}
+        bonusCredits={profile?.bonus_credits ?? 0}
         cycleDone={cycleDone}
         nextLevelHint={profile?.level}
         missingRoleLevel={missingRoleLevel}

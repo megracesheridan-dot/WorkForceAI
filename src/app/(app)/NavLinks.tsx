@@ -9,6 +9,7 @@ const NAV = [
   { href: "/workforce", label: "AI Workforce" },
   { href: "/assets", label: "Assets" },
   { href: "/teams", label: "Teams" },
+  { href: "/ads", label: "Rewarded Ads" },
   { href: "/settings", label: "Settings" },
 ];
 

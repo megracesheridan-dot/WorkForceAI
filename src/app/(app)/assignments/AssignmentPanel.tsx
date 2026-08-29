@@ -13,6 +13,7 @@ export function AssignmentPanel({
   instance,
   catalogue,
   creditBalance,
+  bonusCredits,
   cycleDone,
   missingRoleLevel,
   employees,
@@ -20,6 +21,7 @@ export function AssignmentPanel({
   instance: AssignmentInstance | null;
   catalogue: AssignmentCatalogueItem | null;
   creditBalance: number;
+  bonusCredits: number;
   cycleDone: boolean;
   nextLevelHint?: number;
   missingRoleLevel?: number | null;
@@ -171,10 +173,10 @@ export function AssignmentPanel({
           </div>
           <div>
             <p className="font-mono text-[11px] uppercase tracking-wide text-ink-faint">
-              Solde actuel
+              Solde actuel {bonusCredits > 0 ? "(+ bonus)" : ""}
             </p>
             <p className="font-mono text-lg font-semibold text-bad">
-              {formatCredits(creditBalance)}
+              {formatCredits(creditBalance + bonusCredits)}
             </p>
           </div>
         </div>
