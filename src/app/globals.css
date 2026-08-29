@@ -29,32 +29,10 @@
   --bad-tint: rgba(246, 54, 73, 0.14);
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    --bg: #FAFAFA;
-    --surface: #FFFFFF;
-    --surface-2: #F2F2F3;
-    --border: rgba(0, 0, 0, 0.08);
-    --border-strong: rgba(0, 0, 0, 0.16);
-    --ink: #0B0B0C;
-    --ink-soft: #55565D;
-    --ink-faint: #8B8C93;
-    --accent: #C97F00;
-    --accent-strong: #A66700;
-    --accent-tint: rgba(201, 127, 0, 0.1);
-    --accent-glow: rgba(201, 127, 0, 0.25);
-    --cyan: #2563EB;
-    --cyan-tint: rgba(37, 99, 235, 0.1);
-    --cyan-glow: rgba(37, 99, 235, 0.25);
-    --gold: #C97F00;
-    --gold-tint: rgba(201, 127, 0, 0.1);
-    --gold-glow: rgba(201, 127, 0, 0.25);
-    --good: #0E9F5E;
-    --good-tint: rgba(14, 159, 94, 0.1);
-    --bad: #DC2C3F;
-    --bad-tint: rgba(220, 44, 63, 0.1);
-  }
-}
+/* Pas de repli mode clair : AI Arena est sombre par défaut, comme Bybit —
+   ce n'est pas une option qui suit le thème système, c'est l'identité du
+   produit. (Un vrai bouton de bascule pourra être ajouté plus tard si
+   besoin, mais jamais un silencieux "ça dépend de l'OS du visiteur".) */
 
 @theme inline {
   --color-bg: var(--bg);
