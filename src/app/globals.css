@@ -1,58 +1,58 @@
-@import url("https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
-/* Gaming / esport premium — fond noir riche, violet comme couleur de marque
-   (l'énergie de l'Arena), cyan pour "actif / en exécution", or réservé aux
-   moments de récompense (reward, niveau premium) pour qu'il reste rare et fort. */
+/* Direction "Bybit" — noir pur, un seul accent or/ambre (la marque), vert/rouge
+   réservés aux deltas financiers (comme sur un vrai terminal de trading), pas
+   de glow néon : la sensation premium vient de la netteté, pas de l'effet. */
 :root {
-  --bg: #050308;
-  --surface: #130F1C;
-  --surface-2: #1C1626;
-  --border: rgba(167, 139, 250, 0.16);
-  --border-strong: rgba(167, 139, 250, 0.38);
-  --ink: #F6F3FF;
-  --ink-soft: #B3A9CC;
-  --ink-faint: #766D8C;
-  --accent: #8B5CF6;
-  --accent-strong: #A78BFA;
-  --accent-tint: rgba(139, 92, 246, 0.16);
-  --accent-glow: rgba(139, 92, 246, 0.55);
-  --cyan: #22D3EE;
-  --cyan-tint: rgba(34, 211, 238, 0.14);
-  --cyan-glow: rgba(34, 211, 238, 0.5);
-  --gold: #FBBF24;
-  --gold-tint: rgba(251, 191, 36, 0.14);
-  --gold-glow: rgba(251, 191, 36, 0.5);
-  --good: #34D399;
-  --good-tint: rgba(52, 211, 153, 0.14);
-  --bad: #FB7185;
-  --bad-tint: rgba(251, 113, 133, 0.14);
+  --bg: #000000;
+  --surface: #111114;
+  --surface-2: #17181E;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --ink: #FFFFFF;
+  --ink-soft: #A6A7AD;
+  --ink-faint: #6B6C74;
+  --accent: #F7A600;
+  --accent-strong: #FFBB33;
+  --accent-tint: rgba(247, 166, 0, 0.14);
+  --accent-glow: rgba(247, 166, 0, 0.35);
+  --cyan: #3B82F6;
+  --cyan-tint: rgba(59, 130, 246, 0.14);
+  --cyan-glow: rgba(59, 130, 246, 0.4);
+  --gold: #F7A600;
+  --gold-tint: rgba(247, 166, 0, 0.14);
+  --gold-glow: rgba(247, 166, 0, 0.35);
+  --good: #20B26C;
+  --good-tint: rgba(32, 178, 108, 0.14);
+  --bad: #F63649;
+  --bad-tint: rgba(246, 54, 73, 0.14);
 }
 
 @media (prefers-color-scheme: light) {
   :root {
-    --bg: #FAF9FC;
+    --bg: #FAFAFA;
     --surface: #FFFFFF;
-    --surface-2: #F2EFF9;
-    --border: rgba(124, 58, 237, 0.14);
-    --border-strong: rgba(124, 58, 237, 0.3);
-    --ink: #16121F;
-    --ink-soft: #524A66;
-    --ink-faint: #8A8098;
-    --accent: #7C3AED;
-    --accent-strong: #6D28D9;
-    --accent-tint: rgba(124, 58, 237, 0.1);
-    --accent-glow: rgba(124, 58, 237, 0.35);
-    --cyan: #0891B2;
-    --cyan-tint: rgba(8, 145, 178, 0.1);
-    --cyan-glow: rgba(8, 145, 178, 0.3);
-    --gold: #D97706;
-    --gold-tint: rgba(217, 119, 6, 0.1);
-    --gold-glow: rgba(217, 119, 6, 0.3);
-    --good: #059669;
-    --good-tint: rgba(5, 150, 105, 0.1);
-    --bad: #E11D48;
-    --bad-tint: rgba(225, 29, 72, 0.1);
+    --surface-2: #F2F2F3;
+    --border: rgba(0, 0, 0, 0.08);
+    --border-strong: rgba(0, 0, 0, 0.16);
+    --ink: #0B0B0C;
+    --ink-soft: #55565D;
+    --ink-faint: #8B8C93;
+    --accent: #C97F00;
+    --accent-strong: #A66700;
+    --accent-tint: rgba(201, 127, 0, 0.1);
+    --accent-glow: rgba(201, 127, 0, 0.25);
+    --cyan: #2563EB;
+    --cyan-tint: rgba(37, 99, 235, 0.1);
+    --cyan-glow: rgba(37, 99, 235, 0.25);
+    --gold: #C97F00;
+    --gold-tint: rgba(201, 127, 0, 0.1);
+    --gold-glow: rgba(201, 127, 0, 0.25);
+    --good: #0E9F5E;
+    --good-tint: rgba(14, 159, 94, 0.1);
+    --bad: #DC2C3F;
+    --bad-tint: rgba(220, 44, 63, 0.1);
   }
 }
 
@@ -76,8 +76,8 @@
   --color-good-tint: var(--good-tint);
   --color-bad: var(--bad);
   --color-bad-tint: var(--bad-tint);
-  --font-display: "Rajdhani", "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", monospace;
 }
 
@@ -86,14 +86,13 @@
     box-shadow: 0 0 0 0 var(--cyan-glow);
   }
   50% {
-    box-shadow: 0 0 0 6px rgba(34, 211, 238, 0);
+    box-shadow: 0 0 0 5px rgba(59, 130, 246, 0);
   }
 }
 
 body {
   background:
-    radial-gradient(1100px 600px at 12% -10%, rgba(139, 92, 246, 0.16), transparent 60%),
-    radial-gradient(900px 500px at 100% 10%, rgba(34, 211, 238, 0.10), transparent 55%),
+    radial-gradient(900px 500px at 15% -15%, rgba(247, 166, 0, 0.06), transparent 60%),
     var(--bg);
   background-attachment: fixed;
   color: var(--ink);
@@ -103,15 +102,11 @@ body {
 h1, h2, h3 {
   font-family: var(--font-display);
   font-weight: 700;
-  letter-spacing: -0.01em;
-}
-
-.glow-text {
-  text-shadow: 0 0 24px var(--accent-glow);
+  letter-spacing: -0.02em;
 }
 
 .input {
-  border-radius: 8px;
+  border-radius: 10px;
   border: 1px solid var(--border);
   background: var(--surface-2);
   padding: 0.5rem 0.75rem;

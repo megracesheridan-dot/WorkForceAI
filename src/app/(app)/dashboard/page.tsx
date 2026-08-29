@@ -90,11 +90,8 @@ export default async function DashboardPage() {
         <div className="flex items-center gap-3">
           <div className="h-1.5 w-full max-w-xs overflow-hidden rounded-full bg-surface-2">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-accent to-cyan transition-all duration-500 ease-out"
-              style={{
-                width: `${cycleDone ? 100 : Math.min(100, (cyclePosition / cycleTotal) * 100)}%`,
-                boxShadow: "0 0 10px var(--accent-glow)",
-              }}
+              className="h-full rounded-full bg-accent transition-all duration-500 ease-out"
+              style={{ width: `${cycleDone ? 100 : Math.min(100, (cyclePosition / cycleTotal) * 100)}%` }}
             />
           </div>
           <p className="font-mono text-xs text-ink-faint">

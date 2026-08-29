@@ -6,11 +6,11 @@ import { levelUp } from "../assignments/actions";
 
 type Tier = "Standard" | "Advanced" | "Expert" | "Elite";
 
-function tierFor(level: number): { label: Tier; tone: "neutral" | "cyan" | "accent" | "gold"; glow: boolean } {
-  if (level >= 4) return { label: "Elite", tone: "gold", glow: true };
-  if (level === 3) return { label: "Expert", tone: "accent", glow: false };
-  if (level === 2) return { label: "Advanced", tone: "cyan", glow: false };
-  return { label: "Standard", tone: "neutral", glow: false };
+function tierFor(level: number): { label: Tier; tone: "neutral" | "cyan" | "accent" | "gold" } {
+  if (level >= 4) return { label: "Elite", tone: "gold" };
+  if (level === 3) return { label: "Expert", tone: "accent" };
+  if (level === 2) return { label: "Advanced", tone: "cyan" };
+  return { label: "Standard", tone: "neutral" };
 }
 
 const TIER_BORDER: Record<Tier, string> = {
@@ -91,7 +91,7 @@ export default async function WorkforcePage() {
                 key={e.id}
                 className={`border-l-2 ${unlocked ? TIER_BORDER[tier.label] : "border-l-border"} ${
                   unlocked ? "" : "opacity-50"
-                } ${unlocked && tier.glow ? "shadow-[0_0_24px_-8px_var(--gold-glow)]" : ""}`}
+                }`}
               >
                 <div className="flex items-center justify-between">
                   <p className="font-display text-base font-semibold">{e.name}</p>

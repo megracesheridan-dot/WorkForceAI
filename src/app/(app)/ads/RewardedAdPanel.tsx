@@ -60,7 +60,7 @@ export function RewardedAdPanel({
     return (
       <Card accent className="flex flex-col items-start gap-3">
         <Badge tone="gold">Bonus réclamé</Badge>
-        <p className="font-display text-3xl font-bold text-gold" style={{ textShadow: "0 0 24px var(--gold-glow)" }}>
+        <p className="font-display text-3xl font-bold text-gold">
           +{formatCredits(granted)} bonus credits
         </p>
         <p className="text-sm text-ink-soft">
@@ -86,11 +86,8 @@ export function RewardedAdPanel({
         </div>
         <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-2">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-accent to-cyan transition-all duration-1000 ease-linear"
-            style={{
-              width: `${((WATCH_SECONDS - secondsLeft) / WATCH_SECONDS) * 100}%`,
-              boxShadow: "0 0 10px var(--cyan-glow)",
-            }}
+            className="h-full rounded-full bg-cyan transition-all duration-1000 ease-linear"
+            style={{ width: `${((WATCH_SECONDS - secondsLeft) / WATCH_SECONDS) * 100}%` }}
           />
         </div>
         <p className="text-xs text-ink-faint">

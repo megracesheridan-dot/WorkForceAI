@@ -106,10 +106,7 @@ export function AssignmentPanel({
           <p className="font-mono text-[11px] uppercase tracking-wide text-ink-faint">
             Performance Reward
           </p>
-          <p
-            className="mt-1 font-display text-3xl font-bold tabular-nums text-gold"
-            style={{ textShadow: "0 0 24px var(--gold-glow)" }}
-          >
+          <p className="mt-1 font-display text-3xl font-bold tabular-nums text-gold">
             +{formatCredits(instance.reward_granted)} credits
           </p>
         </div>
