@@ -1,5 +1,8 @@
-// Mark original — un "W" géométrique tracé en trait, pas une copie de la
-// spirale ChatGPT. Utilisé partout où la marque WorkGPT doit apparaître.
+// eslint-disable-next-line @next/next/no-img-element
+import NextImage from "next/image";
+
+// Logo fourni par le client (public/logo-mark.png, fond blanc détouré en
+// transparent) — utilisé partout où la marque WorkGPT doit apparaître.
 export function Logo({
   variant = "full",
   className = "",
@@ -8,17 +11,14 @@ export function Logo({
   className?: string;
 }) {
   const mark = (
-    <svg viewBox="0 0 32 32" className="h-8 w-8 shrink-0" xmlns="http://www.w3.org/2000/svg">
-      <rect width="32" height="32" rx="9" fill="var(--surface-2)" stroke="var(--border)" />
-      <path
-        d="M6 9 L11.5 23 L16 13 L20.5 23 L26 9"
-        stroke="var(--accent)"
-        strokeWidth="3.4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
-    </svg>
+    <NextImage
+      src="/logo-mark.png"
+      alt="WorkGPT"
+      width={465}
+      height={456}
+      className="h-8 w-8 shrink-0 object-contain"
+      priority
+    />
   );
 
   if (variant === "mark") return mark;

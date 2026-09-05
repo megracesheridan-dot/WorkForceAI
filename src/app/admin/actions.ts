@@ -61,6 +61,118 @@ export async function toggleCatalogueStatus(formData: FormData) {
   revalidatePath("/admin/assignments");
 }
 
+export async function createEmployee(formData: FormData) {
+  const supabase = await createClient();
+  const { error } = await supabase.from("ai_employees").insert({
+    name: String(formData.get("name")),
+    role: String(formData.get("role")),
+    specialty: String(formData.get("specialty")),
+    level_required: Number(formData.get("level_required")),
+    execution_capacity: Number(formData.get("execution_capacity")),
+    precision_rate: Number(formData.get("precision_rate")),
+    speed_index: Number(formData.get("speed_index")),
+    synergy_bonus: Number(formData.get("synergy_bonus")),
+    icon: String(formData.get("icon") || "Bot"),
+  });
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/admin/employees");
+  revalidatePath("/");
+}
+
+export async function toggleEmployeeStatus(formData: FormData) {
+  const id = String(formData.get("id"));
+  const nextActive = formData.get("next_active") === "true";
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("ai_employees")
+    .update({ active: nextActive })
+    .eq("id", id);
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/admin/employees");
+  revalidatePath("/");
+}
+
+export async function updateSiteSettings(formData: FormData) {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("site_settings")
+    .update({
+      hero_title: String(formData.get("hero_title") || ""),
+      hero_subtitle: String(formData.get("hero_subtitle") || ""),
+      contact_email: String(formData.get("contact_email") || "") || null,
+      contact_phone: String(formData.get("contact_phone") || "") || null,
+      contact_address: String(formData.get("contact_address") || "") || null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", true);
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/admin/content");
+  revalidatePath("/");
+}
+
+export async function createPartnerLogo(formData: FormData) {
+  const supabase = await createClient();
+  const name = String(formData.get("name") || "").trim();
+  const websiteUrl = String(formData.get("website_url") || "").trim() || null;
+  const sortOrder = Number(formData.get("sort_order") || 0);
+  const logo = formData.get("logo") as File | null;
+
+  if (!logo || logo.size === 0) throw new Error("Un fichier logo est requis.");
+  if (logo.size > 4 * 1024 * 1024) throw new Error("Le fichier dépasse 4 Mo.");
+
+  const ext = logo.name.includes(".") ? logo.name.split(".").pop() : "png";
+  const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from("partner-logos")
+    .upload(path, logo, { contentType: logo.type || "image/png" });
+  if (uploadError) throw new Error(uploadError.message);
+
+  const { error } = await supabase.from("partner_logos").insert({
+    name,
+    logo_path: path,
+    website_url: websiteUrl,
+    sort_order: sortOrder,
+  });
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/admin/partners");
+  revalidatePath("/");
+}
+
+export async function togglePartnerLogoStatus(formData: FormData) {
+  const id = String(formData.get("id"));
+  const nextActive = formData.get("next_active") === "true";
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("partner_logos")
+    .update({ active: nextActive })
+    .eq("id", id);
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/admin/partners");
+  revalidatePath("/");
+}
+
+export async function deletePartnerLogo(formData: FormData) {
+  const id = String(formData.get("id"));
+  const logoPath = String(formData.get("logo_path"));
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("partner_logos").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+
+  await supabase.storage.from("partner-logos").remove([logoPath]);
+
+  revalidatePath("/admin/partners");
+  revalidatePath("/");
+}
+
 export async function approveDeposit(formData: FormData) {
   const requestId = String(formData.get("request_id"));
   const note = String(formData.get("note") || "") || null;

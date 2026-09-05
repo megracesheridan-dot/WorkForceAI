@@ -2,9 +2,25 @@ import Link from "next/link";
 import { Button } from "@/components/ui";
 import { HeroVisual } from "@/components/marketing/HeroVisual";
 import { Reveal } from "@/components/marketing/Reveal";
+import { createClient } from "@/lib/supabase/server";
+import type { SiteSettings } from "@/lib/types";
 import { ShieldCheck, Sparkles } from "lucide-react";
 
-export function Hero() {
+const DEFAULT_TITLE = "Build your AI Workforce.\nComplete Assignments.\nEarn Rewards.";
+const DEFAULT_SUBTITLE =
+  "Recrute des AI Employees, assigne-leur des missions business réelles et génère des Performance Rewards.";
+
+export async function Hero() {
+  const supabase = await createClient();
+  const { data: settings } = await supabase
+    .from("site_settings")
+    .select("*")
+    .eq("id", true)
+    .single<SiteSettings>();
+
+  const titleLines = (settings?.hero_title || DEFAULT_TITLE).split("\n").filter(Boolean);
+  const subtitle = settings?.hero_subtitle || DEFAULT_SUBTITLE;
+
   return (
     <section className="relative overflow-hidden">
       <div
@@ -25,16 +41,14 @@ export function Hero() {
             </span>
           </span>
           <h1 className="max-w-xl font-display text-4xl font-extrabold leading-[1.1] sm:text-5xl">
-            Build your AI Workforce.
-            <br />
-            Complete Assignments.
-            <br />
-            Earn Rewards.
+            {titleLines.map((line, i) => (
+              <span key={i}>
+                {line}
+                {i < titleLines.length - 1 ? <br /> : null}
+              </span>
+            ))}
           </h1>
-          <p className="max-w-lg text-lg text-ink-soft">
-            Recrute des AI Employees, assigne-leur des missions business réelles et génère des
-            Performance Rewards.
-          </p>
+          <p className="max-w-lg text-lg text-ink-soft">{subtitle}</p>
           <div className="flex flex-wrap gap-3">
             <Link href="/signup">
               <Button className="px-6 py-3 text-base">Créer mon Workforce</Button>

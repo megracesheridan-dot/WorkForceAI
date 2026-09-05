@@ -2,22 +2,16 @@ import { createClient } from "@/lib/supabase/server";
 import { Card, Badge, Stat, Button } from "@/components/ui";
 import { formatCredits } from "@/lib/format";
 import type { AiEmployee, Profile, WorkforceLevel } from "@/lib/types";
+import { employeeIcon } from "@/lib/employee-icons";
+import { tierFor } from "@/lib/tiers";
 import { levelUp } from "../assignments/actions";
 
-type Tier = "Standard" | "Advanced" | "Expert" | "Elite";
-
-function tierFor(level: number): { label: Tier; tone: "neutral" | "cyan" | "accent" | "gold" } {
-  if (level >= 4) return { label: "Elite", tone: "gold" };
-  if (level === 3) return { label: "Expert", tone: "accent" };
-  if (level === 2) return { label: "Advanced", tone: "cyan" };
-  return { label: "Standard", tone: "neutral" };
-}
-
-const TIER_BORDER: Record<Tier, string> = {
+const TIER_BORDER: Record<string, string> = {
   Standard: "border-l-border",
   Advanced: "border-l-cyan",
   Expert: "border-l-accent",
   Elite: "border-l-gold",
+  Master: "border-l-gold",
 };
 
 export default async function WorkforcePage() {
@@ -94,7 +88,15 @@ export default async function WorkforcePage() {
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <p className="font-display text-base font-semibold">{e.name}</p>
+                  <span className="flex items-center gap-2">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent-tint text-accent-strong">
+                      {(() => {
+                        const Icon = employeeIcon(e.icon);
+                        return <Icon className="h-4 w-4" />;
+                      })()}
+                    </span>
+                    <p className="font-display text-base font-semibold">{e.name}</p>
+                  </span>
                   <Badge tone={unlocked ? tier.tone : "neutral"}>
                     {unlocked ? tier.label : `Niveau ${e.level_required}+`}
                   </Badge>

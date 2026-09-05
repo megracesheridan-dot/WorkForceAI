@@ -10,6 +10,9 @@ function buildNav(pendingDeposits: number, pendingWithdrawals: number) {
     { href: "/admin/deposits", label: "Deposits", badge: pendingDeposits },
     { href: "/admin/withdrawals", label: "Withdrawals", badge: pendingWithdrawals },
     { href: "/admin/assignments", label: "Assignment Catalogue" },
+    { href: "/admin/employees", label: "AI Employees" },
+    { href: "/admin/partners", label: "Partners" },
+    { href: "/admin/content", label: "Content & Contacts" },
   ];
 }
 

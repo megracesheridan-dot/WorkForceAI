@@ -4,6 +4,7 @@ import { HowItWorks } from "@/components/marketing/HowItWorks";
 import { WorkforcePreview } from "@/components/marketing/WorkforcePreview";
 import { TrustSection } from "@/components/marketing/TrustSection";
 import { FinalCta } from "@/components/marketing/FinalCta";
+import { PartnersMarquee } from "@/components/marketing/PartnersMarquee";
 import { MarketingFooter } from "@/components/marketing/MarketingFooter";
 
 export default function Home() {
@@ -16,6 +17,7 @@ export default function Home() {
         <WorkforcePreview />
         <TrustSection />
         <FinalCta />
+        <PartnersMarquee />
       </main>
       <MarketingFooter />
     </div>

@@ -47,6 +47,27 @@ export interface AiEmployee {
   speed_index: number;
   synergy_bonus: number;
   active: boolean;
+  icon: string;
+}
+
+export interface SiteSettings {
+  id: boolean;
+  hero_title: string;
+  hero_subtitle: string;
+  contact_email: string | null;
+  contact_phone: string | null;
+  contact_address: string | null;
+  updated_at: string;
+}
+
+export interface PartnerLogo {
+  id: string;
+  name: string;
+  logo_path: string;
+  website_url: string | null;
+  sort_order: number;
+  active: boolean;
+  created_at: string;
 }
 
 export interface AssignmentCatalogueItem {
