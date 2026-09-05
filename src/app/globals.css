@@ -68,6 +68,14 @@
   }
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+section[id] {
+  scroll-margin-top: 5rem;
+}
+
 body {
   background:
     radial-gradient(900px 500px at 15% -15%, rgba(247, 166, 0, 0.06), transparent 60%),
