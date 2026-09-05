@@ -1,8 +1,8 @@
-# AI Arena — MVP
+# WorkGPT — MVP
 
 Plateforme d'AI workforce : recrute des AI Employees, assigne des Assignments business,
 génère des Performance Rewards. Coûts et rewards toujours affichés **avant** l'exécution —
-aucun mécanisme de récompense retenue (voir `AI Arena Blueprint` pour le détail produit).
+aucun mécanisme de récompense retenue (voir `WorkGPT Blueprint` pour le détail produit).
 
 ## Stack
 

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui";
+import { Logo } from "@/components/Logo";
 import { signUp } from "../actions";
 
 export default async function SignupPage({
@@ -12,8 +13,8 @@ export default async function SignupPage({
   return (
     <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center gap-6 px-6">
       <div>
-        <p className="font-mono text-xs uppercase tracking-widest text-accent-strong">AI Arena</p>
-        <h1 className="mt-1 font-display text-2xl font-semibold">Créer mon Workforce</h1>
+        <Logo />
+        <h1 className="mt-3 font-display text-2xl font-semibold">Créer mon Workforce</h1>
         <p className="mt-1 text-sm text-ink-soft">
           Tu reçois automatiquement une Starter AI Workforce et 200 crédits de démarrage.
         </p>

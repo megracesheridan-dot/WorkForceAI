@@ -4,6 +4,7 @@ import type { Profile } from "@/lib/types";
 import { formatCredits } from "@/lib/format";
 import { signOut } from "../(auth)/actions";
 import { NavLinks } from "./NavLinks";
+import { Logo } from "@/components/Logo";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -22,10 +23,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     <div className="min-h-screen bg-bg">
       <div className="mx-auto flex max-w-6xl gap-10 px-6 py-8">
         <aside className="w-56 shrink-0 rounded-xl border border-border bg-surface/60 p-4">
-          <p className="font-mono text-xs uppercase tracking-widest text-accent-strong">
-            AI Arena
-          </p>
-          <p className="mt-1 font-display text-lg font-semibold">
+          <Logo />
+          <p className="mt-2 font-display text-lg font-semibold">
             {profile?.display_name || "AI Manager"}
           </p>
 

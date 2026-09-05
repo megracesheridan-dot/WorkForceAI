@@ -7,7 +7,7 @@ const MODEL = process.env.OPENAI_MODEL || "gpt-4.1-mini";
 export const openaiProvider: AIProvider = {
   async runAssignment(brief: AssignmentBrief, employeeNames: string[]): Promise<string> {
     const system = [
-      "Tu es l'AI Workforce d'AI Arena : une équipe d'employés IA spécialisés qui exécute des",
+      "Tu es l'AI Workforce de WorkGPT : une équipe d'employés IA spécialisés qui exécute des",
       "Assignments business réelles pour un utilisateur (AI Manager).",
       `Employés IA mobilisés sur cette Assignment : ${employeeNames.join(", ") || "Workforce généraliste"}.`,
       "Produis un livrable professionnel, concret et directement utilisable — jamais un résumé vague.",

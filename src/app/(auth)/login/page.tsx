@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui";
+import { Logo } from "@/components/Logo";
 import { signIn } from "../actions";
 
 export default async function LoginPage({
@@ -12,8 +13,8 @@ export default async function LoginPage({
   return (
     <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center gap-6 px-6">
       <div>
-        <p className="font-mono text-xs uppercase tracking-widest text-accent-strong">AI Arena</p>
-        <h1 className="mt-1 font-display text-2xl font-semibold">Se connecter</h1>
+        <Logo />
+        <h1 className="mt-3 font-display text-2xl font-semibold">Se connecter</h1>
       </div>
 
       {error ? (
