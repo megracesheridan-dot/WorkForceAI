@@ -5,23 +5,23 @@ import { Eye, PackageCheck, ShieldOff, Users, type LucideIcon } from "lucide-rea
 const POINTS: { icon: LucideIcon; title: string; body: string }[] = [
   {
     icon: Eye,
-    title: "Capacity Check transparent",
-    body: "Coût et reward toujours affichés avant l'exécution — jamais un montant retenu après coup.",
+    title: "Capacity Check",
+    body: "Coût d'exécution et fourchette de reward affichés avant chaque Assignment.",
   },
   {
     icon: PackageCheck,
     title: "Livrables réels",
-    body: "Chaque Assignment produit un vrai livrable exploitable, pas juste un chiffre qui augmente.",
+    body: "Chaque Assignment produit un document, brief, script ou asset exploitable.",
   },
   {
     icon: ShieldOff,
-    title: "Jamais de mission qui échoue",
-    body: "Une Assignment lancée aboutit toujours. Les limites (spécialiste manquant, solde insuffisant) sont signalées avant, jamais après.",
+    title: "Continuité d'exécution",
+    body: "Spécialiste manquant ou solde insuffisant : signalé à la demande, avant lancement.",
   },
   {
     icon: Users,
-    title: "Teams avec bonus réel",
-    body: "Le bonus d'équipe est recalculé à partir des Assignments réellement complétées — jamais un chiffre décoratif.",
+    title: "Bonus d'équipe",
+    body: "Calculé en temps réel sur les Assignments complétées par la Team.",
   },
 ];
 
@@ -32,7 +32,7 @@ export function TrustSection() {
         <p className="font-mono text-xs uppercase tracking-widest text-accent-strong">
           Pourquoi WorkGPT
         </p>
-        <h2 className="mt-2 font-display text-3xl font-bold">Construit pour la confiance.</h2>
+        <h2 className="mt-2 font-display text-3xl font-bold">Fonctionnalités clés.</h2>
       </Reveal>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {POINTS.map((p, i) => (

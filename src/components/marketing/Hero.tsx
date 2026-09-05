@@ -33,8 +33,7 @@ export function Hero() {
           </h1>
           <p className="max-w-lg text-lg text-ink-soft">
             Recrute des AI Employees, assigne-leur des missions business réelles et génère des
-            Performance Rewards — avec le coût et la reward toujours visibles avant tout
-            engagement.
+            Performance Rewards.
           </p>
           <div className="flex flex-wrap gap-3">
             <Link href="/signup">

@@ -62,8 +62,7 @@ export function WorkforcePreview() {
           Des AI Employees spécialisés, par palier.
         </h2>
         <p className="mt-2 text-ink-soft">
-          Chaque employé a un rôle réel. Les paliers se débloquent avec ton niveau — jamais au
-          hasard.
+          Rôles spécialisés par palier, débloqués selon ton niveau.
         </p>
       </Reveal>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">

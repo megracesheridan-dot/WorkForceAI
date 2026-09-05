@@ -15,8 +15,8 @@ const STEPS: { icon: LucideIcon; title: string; body: string }[] = [
   },
   {
     icon: Eye,
-    title: "Vois le coût avant d'engager quoi que ce soit",
-    body: "Coût d'exécution et fourchette de reward affichés avant tout engagement de crédit — jamais après.",
+    title: "Capacity Check",
+    body: "Coût d'exécution et fourchette de reward affichés avant lancement.",
   },
   {
     icon: Wallet,
@@ -32,7 +32,7 @@ export function HowItWorks() {
         <p className="font-mono text-xs uppercase tracking-widest text-accent-strong">
           Comment ça marche
         </p>
-        <h2 className="mt-2 font-display text-3xl font-bold">Aucune surprise, jamais.</h2>
+        <h2 className="mt-2 font-display text-3xl font-bold">Le cycle d&apos;exécution.</h2>
       </Reveal>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {STEPS.map((step, i) => (
