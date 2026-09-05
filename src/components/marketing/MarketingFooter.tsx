@@ -14,7 +14,7 @@ export async function MarketingFooter() {
   const hasContact = settings?.contact_email || settings?.contact_phone || settings?.contact_address;
 
   return (
-    <footer className="border-t border-border">
+    <footer className="relative z-10 border-t border-border bg-bg">
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-10">
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
           <Logo />

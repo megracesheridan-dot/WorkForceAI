@@ -8,23 +8,23 @@ export function FinalCta() {
       <Reveal>
         <Card
           accent
-          className="relative flex flex-col items-center gap-4 overflow-hidden py-16 text-center"
+          className="relative z-10 flex flex-col items-center gap-4 overflow-hidden py-16 text-center"
         >
           <div
-            className="pointer-events-none absolute inset-0 -z-10"
+            className="pointer-events-none absolute inset-0"
             style={{
               background:
                 "radial-gradient(600px 300px at 50% 0%, var(--accent-glow), transparent 70%)",
               opacity: 0.25,
             }}
           />
-          <h2 className="font-display text-3xl font-bold sm:text-4xl">
+          <h2 className="relative z-10 font-display text-4xl font-bold tracking-tight sm:text-5xl">
             Prêt à déployer ton Workforce ?
           </h2>
-          <p className="max-w-md text-ink-soft">
+          <p className="relative z-10 max-w-md text-ink-soft">
             200 crédits de démarrage, aucune carte bancaire requise.
           </p>
-          <Link href="/signup">
+          <Link href="/signup" className="relative z-10">
             <Button className="px-7 py-3.5 text-base">Créer mon Workforce</Button>
           </Link>
         </Card>

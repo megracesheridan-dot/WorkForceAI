@@ -15,7 +15,7 @@ export default function Home() {
     <div className="min-h-screen bg-bg">
       <AmbientBackground />
       <MarketingNav />
-      <main>
+      <main className="relative z-10">
         <Hero />
         <HowItWorks />
         <WorkInAction />

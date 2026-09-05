@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Reveal } from "@/components/marketing/Reveal";
+import { TiltCard } from "@/components/marketing/TiltCard";
 
 export function WorkAnywhere() {
   return (
@@ -7,7 +8,7 @@ export function WorkAnywhere() {
       <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
         <Reveal className="order-2 flex flex-col gap-4 lg:order-1">
           <p className="font-mono text-xs uppercase tracking-widest text-accent-strong">Accès</p>
-          <h2 className="font-display text-3xl font-bold sm:text-4xl">
+          <h2 className="font-display text-4xl font-bold tracking-tight sm:text-5xl">
             Pilote ton Workforce depuis n&apos;importe où.
           </h2>
           <p className="max-w-md text-lg text-ink-soft">
@@ -18,14 +19,14 @@ export function WorkAnywhere() {
 
         <Reveal delay={0.1} className="relative order-1 lg:order-2">
           <div
-            className="absolute -inset-6 -z-10 rounded-[2rem]"
+            className="absolute -inset-6 rounded-[2rem]"
             style={{
               background: "radial-gradient(closest-side, var(--cyan-glow), transparent 70%)",
               filter: "blur(50px)",
               opacity: 0.3,
             }}
           />
-          <div className="relative overflow-hidden rounded-2xl border border-border-strong shadow-2xl">
+          <TiltCard max={5} className="relative z-10 overflow-hidden rounded-2xl border border-border-strong shadow-2xl">
             <Image
               src="/vitaly-gariev-pP_g_3qea0E-unsplash.jpg"
               alt="Workforce piloté depuis le navigateur"
@@ -34,7 +35,7 @@ export function WorkAnywhere() {
               className="h-full w-full scale-105 object-cover [animation:ken-burns_20s_ease-in-out_infinite_alternate]"
             />
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-bg/40 via-transparent to-transparent" />
-          </div>
+          </TiltCard>
         </Reveal>
       </div>
     </section>

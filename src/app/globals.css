@@ -86,6 +86,12 @@
   to { transform: scale(1.14) translate(-1.5%, -1.5%); }
 }
 
+@keyframes mesh-shift {
+  0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  33% { transform: translate(3%, -4%) rotate(6deg) scale(1.06); }
+  66% { transform: translate(-3%, 3%) rotate(-4deg) scale(1.03); }
+}
+
 html {
   scroll-behavior: smooth;
 }

@@ -32,7 +32,9 @@ export function TrustSection() {
         <p className="font-mono text-xs uppercase tracking-widest text-accent-strong">
           Pourquoi WorkGPT
         </p>
-        <h2 className="mt-2 font-display text-3xl font-bold">Fonctionnalités clés.</h2>
+        <h2 className="mt-2 font-display text-4xl font-bold tracking-tight sm:text-5xl">
+          Fonctionnalités clés.
+        </h2>
       </Reveal>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {POINTS.map((p, i) => (

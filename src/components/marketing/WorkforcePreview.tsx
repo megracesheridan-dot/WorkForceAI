@@ -40,7 +40,7 @@ export async function WorkforcePreview() {
         <p className="font-mono text-xs uppercase tracking-widest text-accent-strong">
           AI Workforce
         </p>
-        <h2 className="mt-2 font-display text-3xl font-bold">
+        <h2 className="mt-2 font-display text-4xl font-bold tracking-tight sm:text-5xl">
           <CountUp value={list.length} /> AI Employees spécialisés, par palier.
         </h2>
         <p className="mt-2 text-ink-soft">
