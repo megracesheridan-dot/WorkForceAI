@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { Card, Badge } from "@/components/ui";
 import { Reveal } from "@/components/marketing/Reveal";
+import { CountUp } from "@/components/marketing/CountUp";
 import { employeeIcon } from "@/lib/employee-icons";
 import { tierFor } from "@/lib/tiers";
 import type { AiEmployee } from "@/lib/types";
@@ -40,7 +41,7 @@ export async function WorkforcePreview() {
           AI Workforce
         </p>
         <h2 className="mt-2 font-display text-3xl font-bold">
-          {list.length} AI Employees spécialisés, par palier.
+          <CountUp value={list.length} /> AI Employees spécialisés, par palier.
         </h2>
         <p className="mt-2 text-ink-soft">
           Rôles spécialisés par palier, débloqués selon ton niveau.
