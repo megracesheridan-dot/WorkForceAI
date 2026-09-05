@@ -95,6 +95,33 @@ export interface LedgerTransaction {
   created_at: string;
 }
 
+export interface DepositRequest {
+  id: string;
+  user_id: string;
+  amount: number;
+  method: string;
+  proof_path: string;
+  status: "pending" | "approved" | "rejected";
+  admin_note: string | null;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  created_at: string;
+  profiles?: { display_name: string | null };
+}
+
+export interface WithdrawalRequest {
+  id: string;
+  user_id: string;
+  amount: number;
+  destination: string;
+  status: "pending" | "approved" | "rejected";
+  admin_note: string | null;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  created_at: string;
+  profiles?: { display_name: string | null };
+}
+
 export interface AppNotification {
   id: string;
   user_id: string;

@@ -60,3 +60,63 @@ export async function toggleCatalogueStatus(formData: FormData) {
 
   revalidatePath("/admin/assignments");
 }
+
+export async function approveDeposit(formData: FormData) {
+  const requestId = String(formData.get("request_id"));
+  const note = String(formData.get("note") || "") || null;
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("approve_deposit", {
+    p_request_id: requestId,
+    p_note: note,
+  });
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/admin/deposits");
+  revalidatePath("/admin");
+}
+
+export async function rejectDeposit(formData: FormData) {
+  const requestId = String(formData.get("request_id"));
+  const note = String(formData.get("note") || "") || null;
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("reject_deposit", {
+    p_request_id: requestId,
+    p_note: note,
+  });
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/admin/deposits");
+  revalidatePath("/admin");
+}
+
+export async function approveWithdrawal(formData: FormData) {
+  const requestId = String(formData.get("request_id"));
+  const note = String(formData.get("note") || "") || null;
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("approve_withdrawal", {
+    p_request_id: requestId,
+    p_note: note,
+  });
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/admin/withdrawals");
+  revalidatePath("/admin");
+}
+
+export async function rejectWithdrawal(formData: FormData) {
+  const requestId = String(formData.get("request_id"));
+  const note = String(formData.get("note") || "") || null;
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("reject_withdrawal", {
+    p_request_id: requestId,
+    p_note: note,
+  });
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/admin/withdrawals");
+  revalidatePath("/admin");
+}

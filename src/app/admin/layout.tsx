@@ -19,6 +19,17 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   if (!profile?.is_admin) redirect("/dashboard");
 
+  const [{ count: pendingDeposits }, { count: pendingWithdrawals }] = await Promise.all([
+    supabase
+      .from("deposit_requests")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "pending"),
+    supabase
+      .from("withdrawal_requests")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "pending"),
+  ]);
+
   return (
     <div className="min-h-screen bg-bg">
       <div className="mx-auto flex max-w-6xl gap-10 px-6 py-8">
@@ -27,7 +38,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <p className="mt-2 font-mono text-xs uppercase tracking-widest text-accent-strong">
             Espace de gestion
           </p>
-          <AdminNavLinks />
+          <AdminNavLinks
+            pendingDeposits={pendingDeposits ?? 0}
+            pendingWithdrawals={pendingWithdrawals ?? 0}
+          />
         </aside>
         <main className="min-w-0 flex-1 pb-16">{children}</main>
       </div>
