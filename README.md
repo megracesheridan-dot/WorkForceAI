@@ -24,7 +24,7 @@ Le projet Supabase existe déjà : `https://zjrsuqzwkspijmryuhiq.supabase.co`.
 
 Dans le **SQL Editor** du dashboard Supabase, exécute dans l'ordre :
 
-1. `supabase/migrations/0001_init.sql` — schéma complet (tables, RLS, fonctions).
+1. Exécute les migrations dans l'ordre, de `0001_init.sql` à `0009_control_plane.sql`.
 2. `supabase/seed.sql` — niveaux, AI Employees et catalogue d'Assignments de démarrage.
 
 ### 3. Variables d'environnement
@@ -44,6 +44,32 @@ npm run dev
 Ouvre http://localhost:3000. Crée un compte depuis `/signup` — un profil est créé
 automatiquement avec 200 crédits de démarrage et le niveau 1 (Starter Operator).
 
+Dans un second terminal, lance le worker durable :
+
+```bash
+npm run worker
+```
+
+En production, ce processus doit tourner comme un service Worker Railway distinct avec les mêmes
+variables Supabase et OpenAI que l'application. Le worker est le seul processus autorisé à
+exécuter une Assignment et à la finaliser.
+
+### 4.1 Déployer le Worker sur Railway
+
+1. Dans Railway, crée un projet puis un service depuis ce dépôt GitHub.
+2. Le fichier `railway.toml` configure automatiquement ce service pour exécuter `npm run worker`.
+   Il ne faut pas lui attribuer de domaine public : c'est un processus de file d'exécution, pas une application web.
+3. Dans l'onglet **Variables** du service, ajoute les valeurs suivantes :
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `SUPABASE_SERVICE_ROLE_KEY`
+   - `OPENAI_API_KEY`
+   - `OPENAI_MODEL` (facultatif, `gpt-4.1-mini` est utilisé par défaut)
+   - `WORKER_POLL_INTERVAL_MS=3000`
+   - `WORKER_ID=railway-execution-worker`
+4. Déploie le service. Les logs doivent afficher `started`; chaque Assignment terminée y apparaîtra ensuite.
+
+Ne définis jamais `SUPABASE_SERVICE_ROLE_KEY` ou `OPENAI_API_KEY` dans les variables publiques de l'application web.
+
 ### 5. Devenir admin (pour tester l'espace de gestion)
 
 Dans le SQL Editor Supabase :
@@ -58,9 +84,9 @@ Le lien "Espace de gestion" apparaît alors dans la sidebar (`/admin`).
 
 - Auth (email/mot de passe) + création automatique de profil
 - Dashboard (cycle, solde, niveau, notifications)
-- **Assignment System** : Request Assignment → Capacity Check (coût + reward affichés
-  avant tout engagement) → Assign My AI Employees → exécution réelle via OpenAI →
-  Execution Report avec livrable téléchargeable → reward créditée
+- **Assignment System** : Request Assignment → Assign My AI Employees → job persistant →
+  orchestration séquentielle des AI Employees par worker → rapport d'exécution → finalisation
+  transactionnelle par le worker
 - AI Workforce (employés débloqués par niveau, déblocage de niveau à coût publié)
 - Assets (solde en direct, historique des transactions, dépôt = stub en attendant le paiement réel)
 - Espace de gestion : vue d'ensemble, utilisateurs (+ crédit manuel pour les tests),
@@ -75,5 +101,4 @@ atomique par opération, rien n'est calculé côté navigateur.
 - Paiement réel (Stripe ou équivalent) pour Deposit / Buy Credits
 - Teams (bonus collectif, classement)
 - Rewarded ads
-- Déploiement : Vercel (app) + Supabase (déjà hébergé) ; Render en option pour un futur
-  worker si l'exécution IA doit sortir du cycle de requête HTTP (assignments longs, files d'attente)
+- Déploiement : application web + Supabase (déjà hébergé) + Railway Worker pour les Assignments longues et la file d'exécution.

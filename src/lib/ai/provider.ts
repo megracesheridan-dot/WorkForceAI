@@ -9,9 +9,22 @@ export interface AssignmentBrief {
   tone?: string | null;
   deliverableExpected: string;
   recommendedRoles: string[];
+  context?: Record<string, string>;
+}
+
+export interface WorkforceEmployee {
+  id: string;
+  name: string;
+  role: string;
+  specialty: string;
+}
+
+export interface AgentResult {
+  output: string;
 }
 
 export interface AIProvider {
-  /** Exécute l'Assignment et retourne le livrable réel (texte/markdown) produit par la Workforce. */
-  runAssignment(brief: AssignmentBrief, employeeNames: string[]): Promise<string>;
+  runAgentTask(brief: AssignmentBrief, employee: WorkforceEmployee, context: string): Promise<AgentResult>;
+  synthesize(brief: AssignmentBrief, agentOutputs: string[]): Promise<string>;
+  evaluateQuality(brief: AssignmentBrief, deliverable: string): Promise<number>;
 }
