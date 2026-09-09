@@ -78,6 +78,22 @@ export default async function AdminContentPage() {
             </div>
           </div>
 
+          <div className="border-t border-border pt-4">
+            <p className="mb-3 font-display text-lg font-semibold">Visible contact channels</p>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <label className="flex flex-col gap-1.5"><span className="text-xs text-ink-faint">Telegram URL or handle</span><input name="contact_telegram" defaultValue={settings?.contact_telegram ?? ""} className="input" /></label>
+              <label className="flex flex-col gap-1.5"><span className="text-xs text-ink-faint">WhatsApp URL or number</span><input name="contact_whatsapp" defaultValue={settings?.contact_whatsapp ?? ""} className="input" /></label>
+              <label className="flex flex-col gap-1.5 sm:col-span-2"><span className="text-xs text-ink-faint">Live chat URL</span><input name="contact_live_chat" defaultValue={settings?.contact_live_chat ?? ""} className="input" /></label>
+            </div>
+            <div className="mt-4 flex flex-wrap gap-x-5 gap-y-3 text-sm text-ink-soft">
+              <label className="flex items-center gap-2"><input name="show_email" type="checkbox" defaultChecked={settings?.show_email ?? true} /> Email</label>
+              <label className="flex items-center gap-2"><input name="show_phone" type="checkbox" defaultChecked={settings?.show_phone ?? true} /> Phone</label>
+              <label className="flex items-center gap-2"><input name="show_telegram" type="checkbox" defaultChecked={settings?.show_telegram ?? false} /> Telegram</label>
+              <label className="flex items-center gap-2"><input name="show_whatsapp" type="checkbox" defaultChecked={settings?.show_whatsapp ?? false} /> WhatsApp</label>
+              <label className="flex items-center gap-2"><input name="show_live_chat" type="checkbox" defaultChecked={settings?.show_live_chat ?? false} /> Live chat</label>
+            </div>
+          </div>
+
           <Button type="submit" className="self-start">
             Enregistrer
           </Button>

@@ -1,0 +1,33 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { Badge, Button, Card } from "@/components/ui";
+import { formatCredits, formatDate } from "@/lib/format";
+import { createClient } from "@/lib/supabase/server";
+import type { Profile, WorkforceLevel } from "@/lib/types";
+import { adjustUserBalances, updateUserProfile } from "../../actions";
+
+type AuditEntry = { id: string; action: string; details: Record<string, unknown>; created_at: string };
+
+export default async function AdminUserDetailPage({ params }: { params: Promise<{ userId: string }> }) {
+  const { userId } = await params;
+  const supabase = await createClient();
+  const [{ data: profile }, { data: levels }, { data: audit }, { data: assignments }] = await Promise.all([
+    supabase.from("profiles").select("*").eq("id", userId).maybeSingle<Profile>(),
+    supabase.from("workforce_levels").select("*").order("level").returns<WorkforceLevel[]>(),
+    supabase.from("admin_audit_logs").select("id, action, details, created_at").eq("subject_user_id", userId).order("created_at", { ascending: false }).limit(12).returns<AuditEntry[]>(),
+    supabase.from("assignment_instances").select("id, status, cycle_position, created_at").eq("user_id", userId).order("created_at", { ascending: false }).limit(8),
+  ]);
+  if (!profile) notFound();
+
+  return <div className="flex flex-col gap-8">
+    <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="font-mono text-xs uppercase tracking-widest text-accent-strong">User control record</p><h1 className="mt-1 font-display text-3xl font-semibold">{profile.display_name || "Unnamed user"}</h1><p className="mt-1 font-mono text-xs text-ink-faint">{profile.id}</p></div><Badge tone={profile.account_status === "active" ? "good" : "bad"}>{profile.account_status}</Badge></div>
+
+    <div className="grid gap-4 sm:grid-cols-3"><Card><p className="font-mono text-[11px] uppercase tracking-wide text-ink-faint">Credits</p><p className="mt-1 font-display text-2xl font-semibold">{formatCredits(profile.credit_balance)}</p></Card><Card><p className="font-mono text-[11px] uppercase tracking-wide text-ink-faint">Withdrawable</p><p className="mt-1 font-display text-2xl font-semibold">{formatCredits(profile.withdrawable_balance)}</p></Card><Card><p className="font-mono text-[11px] uppercase tracking-wide text-ink-faint">Cycle</p><p className="mt-1 font-display text-2xl font-semibold">{profile.cycle_position}/{profile.cycle_total}</p></Card></div>
+
+    <Card><h2 className="font-display text-lg font-semibold">Profile, access and payout</h2><form action={updateUserProfile} className="mt-5 grid gap-4 sm:grid-cols-2"><input type="hidden" name="user_id" value={profile.id} /><label className="flex flex-col gap-1.5"><span className="text-xs text-ink-faint">Display name</span><input name="display_name" defaultValue={profile.display_name ?? ""} className="input" /></label><label className="flex flex-col gap-1.5"><span className="text-xs text-ink-faint">Account access</span><select name="account_status" defaultValue={profile.account_status} className="input"><option value="active">Active</option><option value="suspended">Suspended</option></select></label><label className="flex flex-col gap-1.5"><span className="text-xs text-ink-faint">Workforce level</span><select name="level" defaultValue={profile.level} className="input">{(levels ?? []).map((level) => <option key={level.level} value={level.level}>{level.level} / {level.name}</option>)}</select></label><label className="flex flex-col gap-1.5"><span className="text-xs text-ink-faint">Assignments per cycle</span><input name="cycle_total" type="number" min="1" defaultValue={profile.cycle_total} className="input" /></label><label className="flex flex-col gap-1.5"><span className="text-xs text-ink-faint">Payout method</span><input name="payout_method" defaultValue={profile.payout_method ?? ""} placeholder="Bank transfer, wallet, mobile money" className="input" /></label><label className="flex flex-col gap-1.5"><span className="text-xs text-ink-faint">Payout address</span><input name="payout_address" defaultValue={profile.payout_address ?? ""} className="input" /></label><label className="flex flex-col gap-1.5 sm:col-span-2"><span className="text-xs text-ink-faint">Internal reason for this change</span><input name="note" className="input" /></label><Button type="submit" className="sm:col-span-2 sm:w-fit">Save user record</Button></form></Card>
+
+    <Card><h2 className="font-display text-lg font-semibold">Balance adjustment</h2><p className="mt-1 text-sm text-ink-soft">Every change requires a reason, creates a ledger entry and notifies the user. Balances cannot fall below zero.</p><form action={adjustUserBalances} className="mt-5 grid gap-4 sm:grid-cols-2"><input type="hidden" name="user_id" value={profile.id} /><label className="flex flex-col gap-1.5"><span className="text-xs text-ink-faint">Credit delta</span><input name="credit_delta" type="number" step="0.01" defaultValue="0" className="input" /></label><label className="flex flex-col gap-1.5"><span className="text-xs text-ink-faint">Withdrawable balance delta</span><input name="withdrawable_delta" type="number" step="0.01" defaultValue="0" className="input" /></label><label className="flex flex-col gap-1.5 sm:col-span-2"><span className="text-xs text-ink-faint">Reason shown in the account ledger</span><input name="note" required className="input" /></label><Button type="submit" className="sm:col-span-2 sm:w-fit">Apply audited adjustment</Button></form></Card>
+
+    <div className="grid gap-6 lg:grid-cols-2"><Card><h2 className="font-display text-lg font-semibold">Recent assignments</h2><div className="mt-4 flex flex-col divide-y divide-border">{(assignments ?? []).map((assignment) => <div key={assignment.id} className="flex items-center justify-between py-3 text-sm"><span>Position {assignment.cycle_position}</span><span className="font-mono text-xs text-ink-soft">{assignment.status} / {formatDate(assignment.created_at)}</span></div>)}</div><Link href="/admin/assignment-positioning" className="mt-4 inline-block text-sm font-medium text-accent-strong">Manage Assignment Positioning</Link></Card><Card><h2 className="font-display text-lg font-semibold">Audit trail</h2><div className="mt-4 flex flex-col divide-y divide-border">{(audit ?? []).map((entry) => <div key={entry.id} className="py-3"><p className="text-sm font-medium">{entry.action.replaceAll("_", " ")}</p><p className="mt-1 text-xs text-ink-soft">{formatDate(entry.created_at)}</p></div>)}{!audit?.length ? <p className="py-3 text-sm text-ink-faint">No recorded administrative changes.</p> : null}</div></Card></div>
+  </div>;
+}

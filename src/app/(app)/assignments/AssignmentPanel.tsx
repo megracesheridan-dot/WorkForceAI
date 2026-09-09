@@ -1,23 +1,23 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { Card, Badge, Button } from "@/components/ui";
+import Link from "next/link";
+import { useState, useTransition, type ReactNode } from "react";
+import { Badge, Button, Card } from "@/components/ui";
 import { formatCredits } from "@/lib/format";
-import type { AssignmentInstance, AssignmentCatalogueItem, AiEmployee } from "@/lib/types";
-import { requestAssignment, assignAndExecute, levelUp } from "./actions";
+import type { AssignmentInstance, AssignmentCatalogueItem, ExecutionJob, ExecutionStep } from "@/lib/types";
+import { requestAssignment, assignAndExecute, levelUp, resumeExecution } from "./actions";
 import { ExecutionSequence } from "./ExecutionSequence";
 
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+function executionWindow(seconds: number) {
+  const minutes = Math.max(1, Math.ceil(seconds / 60));
+  return `Approx. ${minutes} minute${minutes === 1 ? "" : "s"}`;
+}
 
-export function AssignmentPanel({
-  instance,
-  catalogue,
-  creditBalance,
-  bonusCredits,
-  cycleDone,
-  missingRoleLevel,
-  employees,
-}: {
+function Detail({ label, value, className = "" }: { label: string; value: ReactNode; className?: string }) {
+  return <div className={className}><p className="font-mono text-[11px] uppercase tracking-wide text-ink-faint">{label}</p><div className="mt-1 text-sm leading-6 text-ink">{value}</div></div>;
+}
+
+export function AssignmentPanel({ instance, catalogue, creditBalance, cycleDone, missingRoleLevel, executionJob, executionSteps }: {
   instance: AssignmentInstance | null;
   catalogue: AssignmentCatalogueItem | null;
   creditBalance: number;
@@ -25,7 +25,8 @@ export function AssignmentPanel({
   cycleDone: boolean;
   nextLevelHint?: number;
   missingRoleLevel?: number | null;
-  employees: AiEmployee[];
+  executionJob: ExecutionJob | null;
+  executionSteps: ExecutionStep[];
 }) {
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -34,11 +35,7 @@ export function AssignmentPanel({
   function run(action: () => Promise<void>) {
     setError(null);
     startTransition(async () => {
-      try {
-        await action();
-      } catch (e) {
-        setError(e instanceof Error ? e.message : "Une erreur est survenue.");
-      }
+      try { await action(); } catch (reason) { setError(reason instanceof Error ? reason.message : "Something interrupted this request."); }
     });
   }
 
@@ -46,189 +43,44 @@ export function AssignmentPanel({
     setError(null);
     setExecuting(true);
     startTransition(async () => {
-      try {
-        // Le calcul réel (coût, livrable, reward) est déjà fait et vérifié côté
-        // serveur avant que cette promesse ne résolve — le délai minimum ici ne
-        // fait que ne jamais révéler le résultat plus vite que la séquence
-        // visuelle, il ne modifie ni ne retarde artificiellement le résultat lui-même.
-        await Promise.all([assignAndExecute(instanceId), wait(2200)]);
-      } catch (e) {
-        setError(e instanceof Error ? e.message : "Une erreur est survenue.");
-      } finally {
-        setExecuting(false);
-      }
+      try { await assignAndExecute(instanceId); } catch (reason) { setError(reason instanceof Error ? reason.message : "Something interrupted this request."); } finally { setExecuting(false); }
     });
   }
 
-  if (cycleDone) {
-    return (
-      <Card>
-        <p className="font-display text-lg font-semibold">Daily Assignment Cycle Completed</p>
-        <p className="mt-1 text-sm text-ink-soft">
-          Ton Workforce a complété toutes les Assignments du jour. Reviens demain pour un nouveau
-          cycle.
-        </p>
-      </Card>
-    );
-  }
+  if (cycleDone) return <Card accent><Badge tone="good">Daily cycle complete</Badge><h2 className="mt-4 font-display text-2xl font-semibold">Your AI Workforce has completed today&apos;s assignment cycle.</h2><p className="mt-2 max-w-xl text-sm leading-6 text-ink-soft">A fresh assignment cycle will be available tomorrow.</p></Card>;
 
-  if (!instance) {
-    return (
-      <Card className="flex flex-col items-start gap-3">
-        <p className="font-display text-lg font-semibold">Aucune Assignment active</p>
-        <p className="text-sm text-ink-soft">
-          Demande une nouvelle Assignment. Le coût et la fourchette de reward seront affichés
-          avant tout engagement de crédit.
-        </p>
-        {error ? <p className="text-sm text-bad">{error}</p> : null}
-        <Button onClick={() => run(requestAssignment)} disabled={pending}>
-          {pending ? "…" : "Request Assignment"}
-        </Button>
-      </Card>
-    );
-  }
+  if (!instance) return <Card accent className="max-w-3xl"><p className="font-mono text-[11px] uppercase tracking-wide text-accent-strong">AI Workforce desk</p><h2 className="mt-2 font-display text-2xl font-semibold">Your next client assignment is ready to be requested.</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-ink-soft">WorkGPT will match your current Workforce capacity with the next available business brief.</p>{error ? <p className="mt-4 text-sm text-bad">{error}</p> : null}<Button className="mt-5" onClick={() => run(requestAssignment)} disabled={pending}>{pending ? "Requesting..." : "Request Assignment"}</Button></Card>;
 
   if (!catalogue) return null;
 
-  if (executing) {
-    return <ExecutionSequence title={catalogue.title} employees={employees} />;
-  }
+  if (executing || instance.status === "in_progress") return <ExecutionSequence title={catalogue.title} steps={executionSteps} qualityTarget={executionJob?.quality_target ?? instance.quality_target ?? catalogue.quality_target} estimatedSeconds={instance.estimated_execution_seconds ?? catalogue.estimated_execution_seconds} />;
 
   if (instance.status === "completed") {
-    return (
-      <Card accent className="flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <p className="font-display text-lg font-semibold">Execution Report</p>
-          <Badge tone="good">Completed</Badge>
-        </div>
-        <p className="text-sm text-ink-soft">{catalogue.title}</p>
-        <div className="rounded-lg border border-gold/30 bg-gold-tint p-4">
-          <p className="font-mono text-[11px] uppercase tracking-wide text-ink-faint">
-            Performance Reward
-          </p>
-          <p className="mt-1 font-display text-3xl font-bold tabular-nums text-gold">
-            +{formatCredits(instance.reward_granted)} credits
-          </p>
-        </div>
-        <div className="rounded-lg border border-border bg-surface-2 p-4">
-          <p className="mb-2 font-mono text-[11px] uppercase tracking-wide text-ink-faint">
-            Livrable
-          </p>
-          <pre className="whitespace-pre-wrap font-sans text-sm text-ink">
-            {instance.deliverable}
-          </pre>
-        </div>
-        {error ? <p className="text-sm text-bad">{error}</p> : null}
-        <Button onClick={() => run(requestAssignment)} disabled={pending}>
-          {pending ? "…" : "Request Next Assignment"}
-        </Button>
-      </Card>
-    );
+    const score = executionJob?.quality_score;
+    return <Card accent className="flex flex-col gap-6">
+      <div className="flex flex-wrap items-start justify-between gap-3"><div><Badge tone="good">Completed</Badge><h2 className="mt-3 font-display text-2xl font-semibold">Execution Report</h2><p className="mt-1 text-sm text-ink-soft">{catalogue.title}</p></div><div className="text-right"><p className="font-mono text-[11px] uppercase tracking-wide text-ink-faint">Performance reward</p><p className="mt-1 font-display text-2xl font-bold tabular-nums text-gold">+{formatCredits(instance.reward_granted ?? 0)} credits</p></div></div>
+      <div className="grid gap-4 border-y border-border py-4 sm:grid-cols-3"><Detail label="Quality achieved" value={<span className="font-mono text-lg font-semibold">{score?.toFixed(0) ?? "-"}/{executionJob?.quality_target?.toFixed(0) ?? catalogue.quality_target.toFixed(0)}</span>} /><Detail label="Workforce steps" value={<span className="font-mono text-lg font-semibold">{executionSteps.filter((step) => step.status === "completed").length}/{executionSteps.length}</span>} /><Detail label="Delivery status" value={<span className="font-medium text-good">Ready for review</span>} /></div>
+      <section><p className="font-mono text-[11px] uppercase tracking-wide text-ink-faint">Delivered output</p><pre className="mt-3 max-h-[32rem] overflow-auto whitespace-pre-wrap border-l-2 border-accent pl-4 font-sans text-sm leading-6 text-ink">{instance.deliverable}</pre></section>
+      {error ? <p className="text-sm text-bad">{error}</p> : null}<Button className="self-start" onClick={() => run(requestAssignment)} disabled={pending}>{pending ? "Requesting..." : "Request Next Assignment"}</Button>
+    </Card>;
   }
 
-  if (instance.status === "specialist_required") {
-    return (
-      <Card className="flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <p className="font-display text-lg font-semibold">{catalogue.title}</p>
-          <Badge tone="neutral">Specialist Required</Badge>
-        </div>
-        <p className="text-sm text-ink-soft">
-          Cette Assignment nécessite un employé <strong>{instance.missing_role}</strong> (niveau
-          {" "}
-          {missingRoleLevel ?? catalogue.level_required}+). Ta Workforce actuelle ne l&apos;inclut
-          pas encore. Aucun crédit n&apos;a été engagé.
-        </p>
-        {error ? <p className="text-sm text-bad">{error}</p> : null}
-        <div className="flex gap-3">
-          <Button variant="ghost" onClick={() => run(requestAssignment)} disabled={pending}>
-            Passer à l&apos;Assignment suivante
-          </Button>
-          <Button onClick={() => run(levelUp)} disabled={pending}>
-            {pending ? "…" : "Débloquer le niveau suivant"}
-          </Button>
-        </div>
-      </Card>
-    );
+  if (instance.status === "paused") {
+    const target = executionJob?.quality_target ?? instance.quality_target ?? catalogue.quality_target;
+    return <Card accent className="flex flex-col gap-6">
+      <div className="flex flex-wrap items-start justify-between gap-3"><div><Badge tone="gold">Execution paused</Badge><h2 className="mt-3 font-display text-2xl font-semibold">Additional workforce capacity is required.</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-ink-soft">This assignment can continue once the required specialist capacity is available. Its increased target protects the quality of the final delivery.</p></div><p className="font-mono text-[11px] uppercase tracking-wide text-ink-faint">{catalogue.title}</p></div>
+      <div className="grid gap-x-6 gap-y-5 border-y border-border py-5 sm:grid-cols-2 lg:grid-cols-3"><Detail label="Current quality" value={<span className="font-mono text-lg font-semibold">{executionJob?.quality_score?.toFixed(0) ?? "-"}/100</span>} /><Detail label="Required target" value={<span className="font-mono text-lg font-semibold">{target.toFixed(0)}/100</span>} /><Detail label="Active workforce" value={`${executionSteps.filter((step) => step.status === "completed").length} specialist contributions`} /><Detail label="Required specialist employee" value={instance.missing_role ? `${instance.missing_role}${missingRoleLevel ? ` / Level ${missingRoleLevel}+` : ""}` : "Additional specialist capacity"} /><Detail label="Credit engaged" value={<span className="font-mono">{formatCredits(instance.credit_cost)} credits</span>} /><Detail label="Projected reward" value={<span className="font-mono font-semibold text-good">{formatCredits(executionJob?.projected_reward ?? instance.reward_max)} credits</span>} /></div>
+      {error ? <p className="text-sm text-bad">{error}</p> : null}<div className="flex flex-wrap gap-3"><Button onClick={() => run(levelUp)} disabled={pending}>{pending ? "Updating..." : "Unlock Workforce Capacity"}</Button>{executionJob ? <Button variant="ghost" onClick={() => run(() => resumeExecution(executionJob.id))} disabled={pending}>Resume Execution</Button> : null}<Link className="inline-flex items-center justify-center rounded-full border border-border px-5 py-2.5 text-sm font-semibold text-ink transition-colors hover:border-border-strong hover:bg-surface-2" href="/assets">View Assets</Link></div>
+    </Card>;
   }
 
-  if (instance.status === "insufficient_credits") {
-    return (
-      <Card className="flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <p className="font-display text-lg font-semibold">{catalogue.title}</p>
-          <Badge tone="bad">Insufficient Credits</Badge>
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p className="font-mono text-[11px] uppercase tracking-wide text-ink-faint">
-              Coût requis
-            </p>
-            <p className="font-mono text-lg font-semibold">
-              {formatCredits(instance.credit_cost)}
-            </p>
-          </div>
-          <div>
-            <p className="font-mono text-[11px] uppercase tracking-wide text-ink-faint">
-              Solde actuel {bonusCredits > 0 ? "(+ bonus)" : ""}
-            </p>
-            <p className="font-mono text-lg font-semibold text-bad">
-              {formatCredits(creditBalance + bonusCredits)}
-            </p>
-          </div>
-        </div>
-        {error ? <p className="text-sm text-bad">{error}</p> : null}
-        <div className="flex gap-3">
-          <Button variant="ghost" onClick={() => run(requestAssignment)} disabled={pending}>
-            Passer à l&apos;Assignment suivante
-          </Button>
-          <a href="/assets">
-            <Button disabled={pending}>Ajouter des crédits</Button>
-          </a>
-        </div>
-      </Card>
-    );
-  }
-
-  // status === "offered" | "in_progress"
-  return (
-    <Card className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <p className="font-display text-lg font-semibold">{catalogue.title}</p>
-        <Badge tone="accent">{catalogue.category}</Badge>
-      </div>
-      <p className="text-sm text-ink-soft">{catalogue.objective}</p>
-
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <div>
-          <p className="font-mono text-[11px] uppercase tracking-wide text-ink-faint">Audience</p>
-          <p className="text-sm">{catalogue.audience || "—"}</p>
-        </div>
-        <div>
-          <p className="font-mono text-[11px] uppercase tracking-wide text-ink-faint">Livrable</p>
-          <p className="text-sm">{catalogue.deliverable_expected}</p>
-        </div>
-        <div>
-          <p className="font-mono text-[11px] uppercase tracking-wide text-ink-faint">
-            Coût d&apos;exécution
-          </p>
-          <p className="font-mono text-sm font-semibold">{formatCredits(instance.credit_cost)}</p>
-        </div>
-        <div>
-          <p className="font-mono text-[11px] uppercase tracking-wide text-ink-faint">
-            Reward estimée
-          </p>
-          <p className="font-mono text-sm font-semibold text-good">
-            {formatCredits(instance.reward_min)}–{formatCredits(instance.reward_max)}
-          </p>
-        </div>
-      </div>
-
-      {error ? <p className="text-sm text-bad">{error}</p> : null}
-
-      <Button onClick={() => runExecution(instance.id)} disabled={pending}>
-        Assign My AI Employees
-      </Button>
-    </Card>
-  );
+  const context = catalogue.brief_context ?? {};
+  return <Card accent className="flex flex-col gap-6">
+    <div className="flex flex-wrap items-start justify-between gap-3"><div><p className="font-mono text-[11px] uppercase tracking-wide text-accent-strong">Client assignment</p><h2 className="mt-2 font-display text-2xl font-semibold">{catalogue.title}</h2><p className="mt-2 max-w-3xl text-sm leading-6 text-ink-soft">{catalogue.objective}</p></div><Badge tone="accent">{catalogue.category}</Badge></div>
+    <div className="grid gap-x-6 gap-y-5 border-y border-border py-5 md:grid-cols-2"><Detail label="Client" value={context.client ?? "Confidential client brief"} /><Detail label="Business need" value={context.business_need ?? context.market_scope ?? catalogue.objective} /><Detail label="Success criteria" value={context.success_criteria ?? "A focused, directly usable business delivery."} /><Detail label="Expected delivery" value={catalogue.deliverable_expected} /><Detail label="Audience" value={catalogue.audience ?? "Defined in the client brief"} /><Detail label="Tone" value={catalogue.tone ?? "Defined in the client brief"} /></div>
+    <div className="grid gap-4 sm:grid-cols-3"><Detail label="Quality target" value={<span className="font-mono text-lg font-semibold">{catalogue.quality_target.toFixed(0)}/100</span>} /><Detail label="Execution window" value={<span className="font-medium">{executionWindow(catalogue.estimated_execution_seconds)}</span>} /><Detail label="Credit engaged" value={<span className="font-mono font-semibold">{formatCredits(instance.credit_cost)} credits</span>} /></div>
+    <section className="border-t border-border pt-5"><p className="font-mono text-[11px] uppercase tracking-wide text-ink-faint">AI Workforce required</p><div className="mt-3 flex flex-wrap gap-2">{catalogue.recommended_roles.map((role) => <Badge key={role} tone="neutral">{role}</Badge>)}</div></section>
+    <div className="flex flex-wrap items-center justify-between gap-4 border-t border-border pt-5"><p className="text-xs text-ink-soft">Available credits: <span className="font-mono text-ink">{formatCredits(creditBalance)}</span>. The completed delivery is evaluated against the stated quality target.</p><Button onClick={() => runExecution(instance.id)} disabled={pending}>{pending ? "Deploying..." : "Deploy My AI Workforce"}</Button></div>
+    {error ? <p className="text-sm text-bad">{error}</p> : null}
+  </Card>;
 }

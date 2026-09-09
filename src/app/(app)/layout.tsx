@@ -5,6 +5,7 @@ import { formatCredits } from "@/lib/format";
 import { signOut } from "../(auth)/actions";
 import { NavLinks } from "./NavLinks";
 import { Logo } from "@/components/Logo";
+import { RealtimeSync } from "@/components/RealtimeSync";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -19,8 +20,11 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     .eq("id", user.id)
     .single<Profile>();
 
+  if (profile?.account_status === "suspended") redirect("/login?reason=account-unavailable");
+
   return (
     <div className="min-h-screen bg-bg">
+      <RealtimeSync userId={user.id} />
       <div className="mx-auto flex max-w-6xl gap-10 px-6 py-8">
         <aside className="w-56 shrink-0 rounded-xl border border-border bg-surface/60 p-4">
           <Logo />

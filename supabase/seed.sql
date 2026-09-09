@@ -101,4 +101,7 @@ insert into public.assignment_catalogue
    'Concevoir un workflow d''automatisation marketing multi-outils.',
    'Équipe growth', 'Technique, précis',
    'Schéma de workflow + spécification des déclencheurs.',
-   array['Automation Engineer','Data Analyst'], 90, 21, 32);
+  array['Automation Engineer','Data Analyst'], 90, 21, 32);
+
+-- Normalize the demonstration catalogue after its idempotent reset.
+select public.apply_premium_assignment_briefs();

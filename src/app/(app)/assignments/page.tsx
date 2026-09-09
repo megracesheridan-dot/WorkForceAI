@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import type { AssignmentInstance, AssignmentCatalogueItem, AiEmployee, Profile } from "@/lib/types";
+import type { AssignmentInstance, AssignmentCatalogueItem, ExecutionJob, ExecutionStep, Profile } from "@/lib/types";
 import { AssignmentPanel } from "./AssignmentPanel";
 
 export default async function AssignmentsPage() {
@@ -32,18 +32,8 @@ export default async function AssignmentsPage() {
     catalogue = data;
   }
 
-  let employees: AiEmployee[] = [];
-  if (catalogue) {
-    const { data } = await supabase
-      .from("ai_employees")
-      .select("*")
-      .in("role", catalogue.recommended_roles)
-      .returns<AiEmployee[]>();
-    employees = data ?? [];
-  }
-
   let missingRoleLevel: number | null = null;
-  if (latest?.status === "specialist_required" && latest.missing_role) {
+  if (latest?.status === "paused" && latest.missing_role) {
     const { data } = await supabase
       .from("ai_employees")
       .select("level_required")
@@ -52,6 +42,24 @@ export default async function AssignmentsPage() {
       .limit(1)
       .maybeSingle<{ level_required: number }>();
     missingRoleLevel = data?.level_required ?? null;
+  }
+
+  let executionJob: ExecutionJob | null = null;
+  let executionSteps: ExecutionStep[] = [];
+  if (latest?.execution_job_id) {
+    const { data } = await supabase
+      .from("execution_jobs")
+      .select("*")
+      .eq("id", latest.execution_job_id)
+      .single<ExecutionJob>();
+    executionJob = data;
+    const { data: steps } = await supabase
+      .from("execution_steps")
+      .select("id, job_id, employee_id, sequence, status, output_text, started_at, completed_at, ai_employees(id, name, role)")
+      .eq("job_id", latest.execution_job_id)
+      .order("sequence", { ascending: true })
+      .returns<ExecutionStep[]>();
+    executionSteps = steps ?? [];
   }
 
   const cycleDone =
@@ -79,7 +87,8 @@ export default async function AssignmentsPage() {
         cycleDone={cycleDone}
         nextLevelHint={profile?.level}
         missingRoleLevel={missingRoleLevel}
-        employees={employees}
+        executionJob={executionJob}
+        executionSteps={executionSteps}
       />
     </div>
   );

@@ -22,6 +22,39 @@ export async function grantCredits(formData: FormData) {
   revalidatePath("/admin/users");
 }
 
+export async function updateUserProfile(formData: FormData) {
+  const userId = String(formData.get("user_id"));
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("admin_update_user_profile", {
+    p_user_id: userId,
+    p_display_name: String(formData.get("display_name") || ""),
+    p_level: Number(formData.get("level")),
+    p_cycle_total: Number(formData.get("cycle_total")),
+    p_account_status: String(formData.get("account_status")),
+    p_payout_method: String(formData.get("payout_method") || ""),
+    p_payout_address: String(formData.get("payout_address") || ""),
+    p_note: String(formData.get("note") || "") || null,
+  });
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/users");
+  revalidatePath(`/admin/users/${userId}`);
+}
+
+export async function adjustUserBalances(formData: FormData) {
+  const userId = String(formData.get("user_id"));
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("admin_adjust_balances", {
+    p_user_id: userId,
+    p_credit_delta: Number(formData.get("credit_delta") || 0),
+    p_withdrawable_delta: Number(formData.get("withdrawable_delta") || 0),
+    p_note: String(formData.get("note") || ""),
+  });
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/users");
+  revalidatePath(`/admin/users/${userId}`);
+  revalidatePath("/assets");
+}
+
 export async function createCatalogueItem(formData: FormData) {
   const supabase = await createClient();
   const recommendedRoles = String(formData.get("recommended_roles") || "")
@@ -45,6 +78,26 @@ export async function createCatalogueItem(formData: FormData) {
   if (error) throw new Error(error.message);
 
   revalidatePath("/admin/assignments");
+}
+
+export async function scheduleAssignmentPosition(formData: FormData) {
+  const userId = String(formData.get("user_id") || "");
+  const catalogueId = String(formData.get("catalogue_id") || "");
+  const cycleDate = String(formData.get("cycle_date") || "");
+  const cyclePosition = Number(formData.get("cycle_position"));
+  if (!userId || !catalogueId || !cycleDate || !Number.isInteger(cyclePosition) || cyclePosition < 1) {
+    throw new Error("Invalid assignment positioning request.");
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("admin_schedule_assignment", {
+    p_user_id: userId,
+    p_catalogue_id: catalogueId,
+    p_cycle_date: cycleDate,
+    p_cycle_position: cyclePosition,
+  });
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/assignment-positioning");
 }
 
 export async function toggleCatalogueStatus(formData: FormData) {
@@ -105,6 +158,14 @@ export async function updateSiteSettings(formData: FormData) {
       contact_email: String(formData.get("contact_email") || "") || null,
       contact_phone: String(formData.get("contact_phone") || "") || null,
       contact_address: String(formData.get("contact_address") || "") || null,
+      contact_telegram: String(formData.get("contact_telegram") || "") || null,
+      contact_whatsapp: String(formData.get("contact_whatsapp") || "") || null,
+      contact_live_chat: String(formData.get("contact_live_chat") || "") || null,
+      show_email: formData.get("show_email") === "on",
+      show_phone: formData.get("show_phone") === "on",
+      show_telegram: formData.get("show_telegram") === "on",
+      show_whatsapp: formData.get("show_whatsapp") === "on",
+      show_live_chat: formData.get("show_live_chat") === "on",
       updated_at: new Date().toISOString(),
     })
     .eq("id", true);

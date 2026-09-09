@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Profile } from "@/lib/types";
 import { AdminNavLinks } from "./AdminNavLinks";
 import { Logo } from "@/components/Logo";
+import { RealtimeSync } from "@/components/RealtimeSync";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -17,7 +18,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     .eq("id", user.id)
     .single<Profile>();
 
-  if (!profile?.is_admin) redirect("/dashboard");
+  if (!profile?.is_admin || profile.account_status === "suspended") redirect("/dashboard");
 
   const [{ count: pendingDeposits }, { count: pendingWithdrawals }] = await Promise.all([
     supabase
@@ -32,6 +33,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <div className="min-h-screen bg-bg">
+      <RealtimeSync userId={user.id} isAdmin />
       <div className="mx-auto flex max-w-6xl gap-10 px-6 py-8">
         <aside className="w-56 shrink-0 rounded-xl border border-border bg-surface/60 p-4">
           <Logo />
